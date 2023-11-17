@@ -3,17 +3,17 @@ from whatsapp import  send_message
 from texttospeech import speak
 from db import insert_contact_db, read_contact_db, insert_reminder_db, read_reminder_db
 from reminder import check_reminder
+from gesture import main_opencv
 import threading
 from dateutil import parser
 def main():
   while True: 
-        # Read reminders from the database
+        gesture_process = Process(target=main_opencv)
+        gesture_process.start()
         columns = read_reminder_db()
-        # Create a thread for checking reminders
         reminders_thread = threading.Thread(target=check_reminder, args=(columns,))
-        # Start the thread
+        gesture_thread.start()
         reminders_thread.start()
-        # Wait for the thread to finish
         text = speech_to_text()
         if text == 0:
             continue
