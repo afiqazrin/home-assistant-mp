@@ -1,7 +1,7 @@
 import sqlite3
 
-contacts_db = sqlite3.connect(r"/home/afiq/database/contacts.db")
-reminders_db = sqlite3.connect(r"/home/afiq/database/reminders.db")
+contacts_db = sqlite3.connect(r"database/contacts.db")
+reminders_db = sqlite3.connect(r"database/reminders.db")
 
 def insert_contact_db(name, number):
     # create cursor object to send sql commands to contacts_db
