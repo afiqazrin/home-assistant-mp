@@ -1,5 +1,4 @@
 import speech_recognition as sr
-import main as m
 import pywhatkit
 
 r = sr.Recognizer()
@@ -17,6 +16,3 @@ def speech_to_text():
                 return text  # Return the valid text and exit the loop
             except sr.UnknownValueError:
                 print("Sorry, I didn't understand that. Please try again.")
-            # except sr.RequestError as e:
-            #     # print("Error: {0}. Please try again.".format(e))
-            #     print()

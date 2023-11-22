@@ -1,18 +1,21 @@
-from speechtotext import *
-from whatsapp import  send_message
+from speechtotext import speech_to_text
+from whatsapp import send_message
 from texttospeech import speak
-from db import insert_contact_db, read_contact_db, insert_reminder_db, read_reminder_db
+from projectdb import insert_contact_db, read_contact_db, insert_reminder_db, read_reminder_db
 from reminder import check_reminder
-from gesture import main_opencv
+from opencvfunctions import process_frame
 import threading
+from multiprocessing import Process
 from dateutil import parser
+import time
+import queue
+
 def main():
-  while True: 
-        gesture_process = Process(target=main_opencv)
-        gesture_process.start()
+    person_detection_process = Process(target=process_frame, args=("person_detection",))
+    person_detection_process.start()
+    while True:
         columns = read_reminder_db()
         reminders_thread = threading.Thread(target=check_reminder, args=(columns,))
-        gesture_thread.start()
         reminders_thread.start()
         text = speech_to_text()
         if text == 0:
@@ -24,7 +27,7 @@ def main():
             number = "+65" + speech_to_text()
             speak("Saving name" + name + " with number" + number + " in contacts")
             insert_contact_db(name, number)
-        elif "send a message" in text: 
+        elif "send a message" in text:
             speak("Who should I send a message to?")
             contact_name = speech_to_text().lower()
             while read_contact_db(contact_name) == None:
@@ -42,7 +45,24 @@ def main():
             parsed_reminder_time = parser.parse(reminder_time)
             print(parsed_reminder_time)
             insert_reminder_db(parsed_reminder_time, reminder_text)
+        elif "adjust" in text:
+            speak("Adjusting system controls")
+            person_detection_process.terminate()
+            time.sleep(1)
+            systems_control_process = Process(
+                target=process_frame, args=("system_control",)
+            )
+            systems_control_process.start()
+            time.sleep(30)
+            systems_control_process.terminate()
+            time.sleep(1)
+            person_detection_process = Process(
+                target=process_frame, args=("person_detection",)
+            )
+            person_detection_process.start()
         elif "bye" in text:
             speak("bye")
+
+
 if __name__ == "__main__":
     main()
