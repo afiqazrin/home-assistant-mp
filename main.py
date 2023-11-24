@@ -9,7 +9,7 @@ from multiprocessing import Process
 from dateutil import parser
 import time
 import queue
-
+help_keywords = ["help", "assist", "support", "guide", "emergency", "need help", "help me", "can you help", "assist me", "urgent help"]
 
 
 def save_emergency_contact():
@@ -79,6 +79,8 @@ def main():
                 target=process_frame, args=("person_detection",)
             )
             person_detection_process.start()
+        elif any(keyword in text for keyword in help_keywords):
+            print("Help keyword detected. Do something.")   
         elif "bye" in text:
             speak("bye")
 

@@ -1,9 +1,10 @@
 import speech_recognition as sr
 import pywhatkit
-
+from langdetect import detect
 r = sr.Recognizer()
 
 def speech_to_text():
+
     while True:  # Continue looping until a valid text is obtained
         with sr.Microphone() as source:
             print("Adjusting for ambience noise, please wait...")
