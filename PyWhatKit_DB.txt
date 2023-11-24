@@ -3,3 +3,13 @@ Time: 9:52
 Phone Number: +6594689363
 Message: Person is not detected by camera as of 2023-11-24 09:52:32.658212
 --------------------
+Date: 24/11/2023
+Time: 13:28
+Phone Number: +6594689363
+Message: Person is not detected by camera as of 2023-11-24 13:28:40.203616
+--------------------
+Date: 24/11/2023
+Time: 13:45
+Phone Number: +6594689363
+Message: Person is not detected by camera as of 2023-11-24 13:45:05.567977
+--------------------

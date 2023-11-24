@@ -1,5 +1,5 @@
-import cv2
 import mediapipe as mp
+import cv2
 import pyautogui
 import subprocess
 from subprocess import call
@@ -10,7 +10,7 @@ from datetime import datetime
 import time
 from whatsapp import send_message
 from texttospeech import speak
-
+from bulb import setBulbBrightness
 
 def process_frame(frame_type):
     webcam = cv2.VideoCapture(0)
@@ -90,8 +90,7 @@ def process_frame(frame_type):
                 print("X: ", x_dist)
                 print("Y: ", y_dist)
                 cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 5)
-                cv2.imshow("Processed Frame 2", frame)
-
+            cv2.imshow("Systems Control", frame)
             pass
         elif frame_type == "person_detection":
             if is_table_empty():
@@ -121,7 +120,7 @@ def process_frame(frame_type):
             timediffmin = timedelta / 60
             # print(str(timediffmin))
             # alarm for time
-            if timediffmin > 0.1:
+            if timediffmin > 1:
                 # insert system will say alarm
                 insertnowtime()
                 count += 1
@@ -148,14 +147,63 @@ def process_frame(frame_type):
                         frame, (x, y), (x + w, y + h), (0, 255, 0), 2
                     )  # drawing rectangle on movement object
                     insertnowtime()
-        cv2.imshow("Processed Frame", frame)
+            cv2.imshow("Person Detection", frame)
+        elif frame_type == "bulb_control": 
+                frame_height, frame_width, _ = frame.shape
+                # convert BGR image to RGB image
+                formatted_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                output = hands.process(formatted_image)
+                # detect all fingers
+                fingers = output.multi_hand_landmarks
+                if fingers:
+                    for finger in fingers:
+                        drawing_utils.draw_landmarks(frame, finger)
+                        fingerpoints = finger.landmark
+                        # collecting all fingerpoints
+                        for id, fingerpoint in enumerate(fingerpoints):
+                            x = int(fingerpoint.x * frame_width)
+                            y = int(fingerpoint.y * frame_height)
+                            # ids for each finger can be found by searching up mediapipe hands diagram on google.
+                            # in this case, 8 is index finger tip and 4 is the thumb
+                            if id == 8:
+                                cv2.circle(
+                                    img=frame,
+                                    center=(x, y),
+                                    radius=8,
+                                    color=(0, 255, 255),
+                                    thickness=3,
+                                )
+                                x1 = x
+                                y1 = y
+                                # print(y1)
+                            if id == 4:
+                                cv2.circle(
+                                    img=frame,
+                                    center=(x, y),
+                                    radius=8,
+                                    color=(0, 0, 255),
+                                    thickness=3,
+                                )
+                                x2 = x
+                                y2 = y
+                    cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 5)
+                   
+                    def bulb_thread_function():
+                        y_dist = abs(y2 - y1)/3
+                        if y_dist < 12:
+                            y_dist = 0
+                        print("Thread started: ", y_dist)
+                        setBulbBrightness(y_dist)
 
+                    # Create and start the thread
+                    bulbThread = threading.Thread(target=bulb_thread_function)
+                    bulbThread.start()
+                cv2.imshow("Light Bulb Control", frame)
         # Display the processed frame
         # 10 ms delay before capturing next frame
         key = cv2.waitKey(10)
         # 27 is escape key, exits from the webcam
         if key == 27:
             break
-
     webcam.release()
     cv2.destroyAllWindows()

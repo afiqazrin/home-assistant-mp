@@ -9,8 +9,9 @@ from multiprocessing import Process
 from dateutil import parser
 import time
 import queue
+from bulb import turnOffLightBulb, turnOnLightBulb, setBulbColor
 help_keywords = ["help", "assist", "support", "guide", "emergency", "need help", "help me", "can you help", "assist me", "urgent help"]
-
+isBulbOn = false
 
 def save_emergency_contact():
     speak("Save an emergency contact")
@@ -79,8 +80,43 @@ def main():
                 target=process_frame, args=("person_detection",)
             )
             person_detection_process.start()
+        elif "control light" in text:
+            speak("What do you want to do?")
+            while True:
+                control_choice = speech_to_text()
+                if "turn on light" in control_choice:
+                    turnOnLightBulb()
+                    isBulbOn = True
+                elif "turn off light" in control_choice:
+                    turnOffLightBulb()
+                    isBulbOn = False
+                elif "change light color" in control_choice:
+                    if isBulbOn == False:
+                        turnOnLightBulb()
+                    speak("What color do you want to set?")
+                    color = speech_to_text()
+                    setBulbColor(color)
+                elif "adjust brightness" in control_choice:
+                    if isBulbOn == False:
+                        turnOnLightBulb()
+                    person_detection_process.terminate()
+                    time.sleep(1)
+                    bulb_control_process = Process(
+                        target=process_frame, args=("bulb_control",)
+                    )
+                    bulb_control_process.start()
+                    time.sleep(30)
+                    bulb_control_process.terminate()
+                    time.sleep(1)
+                    person_detection_process = Process(
+                        target=process_frame, args=("person_detection",)
+                    )
+                    person_detection_process.start()
+                elif "exit" in control_choice:
+                    speak("Exiting light control")
+                    break
         elif any(keyword in text for keyword in help_keywords):
-            print("Help keyword detected. Do something.")   
+            pywhatkit(find_emergency_contact(), "Person requires immediate assistance")
         elif "bye" in text:
             speak("bye")
 
