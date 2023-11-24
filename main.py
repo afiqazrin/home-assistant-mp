@@ -1,7 +1,7 @@
 from speechtotext import speech_to_text
 from whatsapp import send_message
 from texttospeech import speak
-from projectdb import insert_contact_db, read_contact_db, insert_reminder_db, read_reminder_db
+from projectdb import insert_contact_db, read_contact_db, insert_reminder_db, read_reminder_db, is_emergency_saved, find_emergency_contact
 from reminder import check_reminder
 from opencvfunctions import process_frame
 import threading
@@ -10,7 +10,26 @@ from dateutil import parser
 import time
 import queue
 
+
+
+def save_emergency_contact():
+    speak("Save an emergency contact")
+    speak("Name of emergency contact to save")
+    emergency_name = speech_to_text()
+    speak("Number of emergency contact")
+    emergency_number = "+65" + speech_to_text()
+    speak(f"Saving emergency contact {emergency_name} with number {emergency_number} in contacts")
+    insert_contact_db(emergency_name, emergency_number)
+
 def main():
+    # Check if the emergency contact has already been saved
+    if not is_emergency_saved():
+        print("emergency contact not saved")
+        save_emergency_contact()
+    else:
+        find_emergency_contact()
+        print("emergency contact saved")
+
     person_detection_process = Process(target=process_frame, args=("person_detection",))
     person_detection_process.start()
     while True:

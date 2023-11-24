@@ -3,11 +3,12 @@ import mediapipe as mp
 import pyautogui
 import subprocess
 from subprocess import call
-from projectdb import insertnowtime, is_table_empty, cleanOldEntries, selectNewestTime
+from projectdb import insertnowtime, is_table_empty, cleanOldEntries, selectNewestTime, find_emergency_contact
 import queue
 import threading
 from datetime import datetime
 import time
+from whatsapp import send_message
 from texttospeech import speak
 
 
@@ -126,8 +127,8 @@ def process_frame(frame_type):
                 count += 1
                 print(count)
                 if count == 3:
+                    send_message(find_emergency_contact(), f"Person is not detected by camera as of {now1}")
                     # insert text
-                    print("pywhatkit here")
                     count = 0
             fg_mask = bg_subtractor.apply(frame)
 
