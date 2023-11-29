@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="templates/png/6169611.png" type="image/x-icon">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
+            height: 100%;
+            margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            position: relative; /* Make the body a positioning context */
+        }
+
+        nav {
+            background: linear-gradient(180deg, #8029C4 0%, #4FC8EE 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center; /* Center vertically */
+            height: 60px;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 20px 16px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+			height:100%
+			line-height: 60px; /* Adjust line height to center text vertically */
+			font-family: Consolas;
+			font-size: 28px;
+			font-style: normal;
+			font-weight: 400;
+			
+    
+        }
+
+        nav a:hover {
+            background: rgba(85, 85, 85, 0.37);
+        }
+
+        nav a.active {
+            background: rgba(112, 111, 111, 0.50);
+        }
+
+        #content {
+            padding: 20px;
+        }
+
+        #clock {
+            color: white;
+            padding: 14px 16px;
+            position: absolute;
+			font-family: Consolas;
+			font-size: 28px;
+			font-style: normal;
+			font-weight: 400;
+            
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="#" onclick="loadPage('http://127.0.0.1:5000/dashboard')" id="dashboardLink">Dashboard</a>
+    <a href="#" onclick="loadPage('http://127.0.0.1:5000/alarm')" id="alarmLink">Alarms</a>
+    <a href="#" onclick="loadPage('http://127.0.0.1:5000/contact')" id="contactLink">Contact</a>
+	<div id="clock"></div>
+
+</nav>
+
+<div id="content">
+    <!-- Content will be loaded here -->
+</div>
+
+
+
+<script>
+var activePage = '';
+var alarmLoaded = false; // Flag to check if alarm page has been loaded
+var refreshInterval; // Variable to store the interval ID
+
+// Function to load a page
+function loadPage(page) {
+	openFullscreen();
+    if (refreshInterval) {
+        clearInterval(refreshInterval); // Clear the refresh interval
+    }
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("content").innerHTML = this.responseText;
+            activePage = page; // Update the active page URL
+            updateActiveLink(page);
+
+            // Set a new refresh interval after loading the page
+            if (activePage.includes('dashboard') || activePage.includes('alarm') || activePage.includes('contact')) {
+				refreshInterval = setInterval(refreshDashboard, 5000);
+			}
+        }
+    };
+    xhttp.open("GET", page, true);
+    xhttp.send();
+}
+
+// Function to update the active link in the navigation bar
+function updateActiveLink(activePage) {
+    var links = document.querySelectorAll('nav a');
+    links.forEach(function (link) {
+        if (link.getAttribute('onclick').includes(activePage)) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
+
+// Function to refresh the dashboard or alarm content
+function refreshDashboard() {
+    if (activePage.includes('dashboard')) {
+        loadPage('http://127.0.0.1:5000/dashboard');
+        console.log("Refreshing Dashboard!");
+		openFullscreen();
+    } else if (activePage.includes('alarm')) {
+        loadPage('http://127.0.0.1:5000/alarm');
+        console.log("Loading Alarm!");
+		openFullscreen();
+    } else if (activePage.includes('contact')) {
+        loadPage('http://127.0.0.1:5000/contact');
+        console.log("Loading Alarm!");
+		openFullscreen();
+    }
+}
+
+// Function to update the clock
+function updateClock() {
+    var now = new Date();
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var seconds = now.getSeconds();
+    var currentDate = now.toDateString();
+
+    document.getElementById('clock').textContent = `${currentDate} ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+}
+
+// Helper function to format time
+function formatTime(value) {
+    return value < 10 ? "0" + value : value;
+}
+
+// Function to open popup
+let popupWindow;
+        function openPopup(){
+            const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const popupWidth = 400; // Width of the popup
+        const popupHeight = 300; // Height of the popup
+
+        const left = (screenWidth - popupWidth) / 2;
+        const top = (screenHeight - popupHeight) / 2;
+
+        const popupProps = `
+            width=${popupWidth},
+            height=${popupHeight},
+            left=${left},
+            top=${top},
+            resizable=no,
+            scrollbars=no,
+            status=no,
+            toolbar=no,
+            location=no,
+            menubar=no
+        `;
+        
+        popupWindow = window.open('/addalarm', 'Popup', popupProps);
+        }
+		if (popupWindow) {
+        // Check every second if the window is closed
+        const interval = setInterval(() => {
+            if (popupWindow.closed) {
+                refreshDashboard();
+                clearInterval(interval); // Stop the interval when the window is closed
+                console.log('Popup window closed.');
+                // You can perform other actions here after the popup is closed
+            }
+        }, 1000); // Check every 1 second (you can adjust the interval as needed)
+    }
+		let addcontactPopup
+        function openaddcontactPopup(){
+            const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const popupWidth = 600; // Width of the popup
+        const popupHeight = 500; // Height of the popup
+
+        const left = (screenWidth - popupWidth) / 2;
+        const top = (screenHeight - popupHeight) / 2;
+
+        const popupProps = `
+            width=${popupWidth},
+            height=${popupHeight},
+            left=${left},
+            top=${top},
+            resizable=no,
+            scrollbars=no,
+            status=no,
+            toolbar=no,
+            location=no,
+            menubar=no
+        `;
+        
+        addcontactPopup = window.open('/addcontact', 'Popup', popupProps);
+        }
+		if (addcontactPopup) {
+        // Check every second if the window is closed
+        const interval = setInterval(() => {
+            if (addcontactPopup.closed) {
+                refreshDashboard();
+                clearInterval(interval); // Stop the interval when the window is closed
+                console.log('Popup window closed.');
+                // You can perform other actions here after the popup is closed
+            }
+        }, 1000); // Check every 1 second (you can adjust the interval as needed)
+    }
+function openEditPopup(description, time) {
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const popupWidth = 400; // Width of the popup
+    const popupHeight = 300; // Height of the popup
+
+    const left = (screenWidth - popupWidth) / 2;
+    const top = (screenHeight - popupHeight) / 2;
+
+    const popupProps = `
+        width=${popupWidth},
+        height=${popupHeight},
+        left=${left},
+        top=${top},
+        resizable=no,
+        scrollbars=no,
+        status=no,
+        toolbar=no,
+        location=no,
+        menubar=no
+    `;
+
+    const editWindow = window.open(`/editalarm?description=${description}&time=${time}`, 'EditPopup', popupProps);
+
+    if (editWindow) {
+        // Check if the window is closed
+        const interval = setInterval(() => {
+            if (editWindow.closed) {
+                refreshDashboard();
+                clearInterval(interval);
+                console.log('Edit popup closed.');
+            }
+        }, 1000);
+    }
+}
+function openFullscreen() {
+    var elem = document.documentElement;
+    elem.webkitRequestFullscreen();
+} 
+function openEditContact(name, number) {
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const popupWidth = 1000; // Width of the popup
+    const popupHeight = 900; // Height of the popup
+
+    const left = (screenWidth - popupWidth) / 2;
+    const top = (screenHeight - popupHeight) / 2;
+
+    const popupProps = `
+        width=${popupWidth},
+        height=${popupHeight},
+        left=${left},
+        top=${top},
+        resizable=no,
+        scrollbars=no,
+        status=no,
+        toolbar=no,
+        location=no,
+        menubar=no
+    `;
+	const encodedNumber = encodeURIComponent(number);
+
+    const editWindow = window.open(`/editcontact?name=${name}&number=${encodedNumber}`, 'EditContactPopup', popupProps);
+
+    if (editWindow) {
+        // Check if the window is closed
+        const interval = setInterval(() => {
+            if (editWindow.closed) {
+                // Perform actions after the popup is closed (e.g., refresh or update data)
+                clearInterval(interval);
+                console.log('Edit contact popup closed.');
+                // You can perform other actions here after the popup is closed
+            }
+        }, 1000);
+    }
+}
+
+// Load dashboard on page load
+window.onload = function () {
+    loadPage('http://127.0.0.1:5000/dashboard');
+    updateClock(); // Initial clock update
+    setInterval(updateClock, 1000); // Update clock every second
+	openFullscreen();
+};
+</script>
+</body>
+</html>

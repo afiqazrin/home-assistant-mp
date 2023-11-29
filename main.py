@@ -11,7 +11,7 @@ import time
 import queue
 from bulb import turnOffLightBulb, turnOnLightBulb, setBulbColor
 help_keywords = ["help", "assist", "support", "guide", "emergency", "need help", "help me", "can you help", "assist me", "urgent help"]
-isBulbOn = false
+isBulbOn = False
 
 def save_emergency_contact():
     speak("Save an emergency contact")
@@ -23,6 +23,7 @@ def save_emergency_contact():
     insert_contact_db(emergency_name, emergency_number)
 
 def main():
+    global isBulbOn
     # Check if the emergency contact has already been saved
     if not is_emergency_saved():
         print("emergency contact not saved")
@@ -63,7 +64,6 @@ def main():
             speak(f"What deadline do you want to set for this reminder?")
             reminder_time = speech_to_text()
             parsed_reminder_time = parser.parse(reminder_time)
-            print(parsed_reminder_time)
             insert_reminder_db(parsed_reminder_time, reminder_text)
         elif "adjust" in text:
             speak("Adjusting system controls")

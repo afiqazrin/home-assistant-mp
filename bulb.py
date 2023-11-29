@@ -2,6 +2,7 @@ import tinytuya
 import webcolors
 from texttospeech import speak
 from speechtotext import speech_to_text
+import time
 def color_name_to_rgb(color_name):
     try:
         rgb_tuple = webcolors.name_to_rgb(color_name)
@@ -14,19 +15,25 @@ def color_name_to_rgb(color_name):
         return None
 
 
-# Connect to Device
-d = tinytuya.BulbDevice(
-    dev_id='3866058070039f21ba4f',
-    address='Auto',      # Or set to 'Auto' to auto-discover IP address
-    local_key="?'`n+0Yb|t+7Yk%1", 
-    version=3.3)
-print(d.status())
+try:
+    d = tinytuya.BulbDevice(
+        dev_id='3866058070039f21ba4f',
+        address='Auto',      # Or set to 'Auto' to auto-discover IP address
+        local_key="v3V>@9SRwo`AZOth", 
+        version=3.3
+    )
+    print(d.status())
+except Exception as e:
+    print(f"An unexpected error occurred during initialization: {e}")
+    # Handle other types of exceptions that may occur during initialization
+
 def turnOnLightBulb():
     d.turn_on()
 def turnOffLightBulb():
     d.turn_off()
 def setBulbBrightness(value):
-    d.set_brightness_percentage(value)
+    print("setting brightness: ", value)
+    d.set_brightness_percentage(value, nowait=False)
 def setBulbColor(color_name):
     try:
         rgb_tuple = webcolors.name_to_rgb(color_name)
@@ -38,3 +45,4 @@ def setBulbColor(color_name):
         print(f"Error: Color name '{color_name}' not recognized.")
         speak("Sorry, I didn't recognize that color. Please try again.")
         color_name = speech_to_text()
+

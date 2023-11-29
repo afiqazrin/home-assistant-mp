@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reminder Form</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Consolas;
+            font-weight: 400;
+            flex-direction: column;
+			background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
+			
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(230, 228, 228, 0.30);
+			box-shadow: -2px 3px 4px 2px rgba(0, 0, 0, 0.45);
+        }
+
+        label,
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function sendData() {
+            var description = document.getElementById('description').value;
+            var reminderTime = document.getElementById('reminder_time').value;
+
+            // Send data only when Confirm is clicked
+            fetch('/submitalarm', {
+                method: 'POST',
+                body: JSON.stringify({ description: description, reminderTime: reminderTime }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => {
+                window.close();
+                // Close the popup after sending data
+            });
+        }
+
+        function closePopup() {
+            window.close(); // Close the popup when Close is clicked
+        }
+    </script>
+</head>
+<body>
+    <h2>Create Reminder</h2>
+    <div class="form-container">
+        <form>
+            <label for="description">Description:</label><br>
+            <input type="text" id="description" name="description"><br>
+            <label for="reminder_time">Reminder Time:</label><br>
+            <input type="datetime-local" id="reminder_time" name="reminder_time"><br><br>
+            <button type="button" onclick="sendData()">Confirm</button>
+            <button type="button" onclick="closePopup()">Close</button>
+        </form>
+    </div>
+</body>
+</html>

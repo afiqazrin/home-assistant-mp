@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Form</title>
+</head>
+	<style>
+
+        .select2-container--open .select2-dropdown {
+            overflow-y: auto; /* Enable scroll for dropdown when open */
+        }
+		body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Consolas;
+            font-weight: 400;
+            flex-direction: column;
+            background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
+			overflow: hidden; /* Disable page scroll */
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(230, 228, 228, 0.30);
+			box-shadow: -2px 3px 4px 2px rgba(0, 0, 0, 0.45);
+        }
+
+        label,
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
+
+<body>
+    <h1>Edit Contact Information</h1>
+    <div class="form-container">
+        <form id="editContactForm" action="/editcontact" method="post">
+            <!-- Input fields for contact information -->
+            <input type="hidden" id="Name" name="contact_name" value="{{ name }}">
+            <input type="hidden" id="Number" name="contact_phone_number" value="{{ number }}">
+
+            <label for="nameField">Name:</label>
+            <input type="text" id="nameField" name="name" value="{{ name }}" required><br><br>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9+\-\s]*" value="{{ number }}" required><br><br>
+			
+
+            <!-- Submit button and Close button -->
+            <input type="submit" value="UpdateContact">
+            <button id="closeButton" onclick="closePopup()">Close</button>
+        </form>
+    </div>
+
+    <!-- Script tags for JavaScript libraries and logic -->
+</body>
+<script>
+function closePopup() {
+            window.close(); // Close the popup when Close is clicked
+        }
+
+document.getElementById('editContactForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(event.target);
+
+        fetch('/editcontact', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Server response:', data);
+            window.close(); // Close the popup after successful update
+        })
+        .catch(error => {
+            console.error('There was an error with the request:', error);
+            // Handle errors if needed
+        });
+    });
+</script>
+</html>

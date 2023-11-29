@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8">
+    <title>contact</title>
+    <style>
+        body {
+            background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
+            height: 100%;
+            margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+			position: relative;
+        }
+
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        table {
+            white-space: nowrap;
+            vertical-align: top;
+            page-break-inside: avoid;
+            page-break-after: auto;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-family: Consolas;
+            font-weight: 400;
+            border-collapse: collapse;
+            width: calc(100% - 40px); /* Adjusted width to create space from the container border */
+            background: rgba(230, 228, 228, 0.30);
+            text-align: left;
+            overflow: hidden;
+            box-shadow: -2px 3px 4px 2px rgba(0, 0, 0, 0.45);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 0;
+            margin-bottom: 20px; /* Added margin-bottom to create space from the table container */
+        }
+
+        table th {
+            padding-left: 2px;
+            background: rgba(230, 228, 228, 0.10);
+            font-family: Consolas;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        table td {
+            font-family: Consolas;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+            font-weight: 400;
+        }
+
+        .tab1-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            background: rgba(230, 228, 228, 0.30);
+            box-shadow: -2px 3px 4px 2px rgba(0, 0, 0, 0.45);
+            text-align: center;
+            position: relative;
+            padding-top: 5px;
+        }
+		.add-button {
+            position: fixed; /* Fix the button position */
+            bottom: 20px; /* Adjust distance from bottom */
+            right: 20px; /* Adjust distance from right */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; /* Create a circle */
+            background-color: #8029C4; /* Purple color */
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add a shadow */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+			box-shadow: -2px 2px 3px 2px rgba(0, 0, 0, 0.45);
+        }
+
+        
+        .add-button::after {
+            content: "+"; /* Adding the plus sign */
+        }
+
+        .edit-button, .delete-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .edit-button {
+            background-color: #3498db; /* Blue color */
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #e74c3c; /* Red color */
+            color: white;
+        }
+
+        /* Align buttons */
+        .button-group {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <div class="tab1-container">
+            <table>
+                <caption>All Contacts</caption>
+                <tr>
+                    <th>Name</th>
+                    <th>Number</th>
+					<th>Action</th>
+                </tr>
+                <tbody>
+                    {% for row in contact %}
+                        <tr>
+						{%if row[2]==1%}
+                            <td style='color:red;'>{{row[0]}}</td>
+							<td style='color:red;'>{{row[1]}}</td>
+						{%else%}
+							<td>{{row[0]}}</td>
+                            <td>{{row[1]}}</td>
+
+						{%endif%}
+							<td>
+								<div class="button-group">
+									<button class="edit-button" onclick="openEditContact('{{ row[0] }}', '{{ row[1] }}')">
+										<i class="fas fa-pencil-alt"></i> <!-- Font Awesome pencil icon -->
+									</button>
+
+									<form action="/deletecontact" method="post">
+										<input type="hidden" name="uname" value="{{ row[0] }}">
+										<input type="hidden" name="unumber" value="{{ row[1] }}">
+										<button class="delete-button" type="submit" onclick='refreshAlarm()'>
+											<i class="fas fa-trash-alt"></i> <!-- Font Awesome trashcan icon -->
+										</button>
+									</form>
+								</div>
+
+                            </td>	
+                        </tr>
+					{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+	<div class="add-button" onclick="openaddcontactPopup()"></div>
+	
+
+</body>
+<script>
+		let addcontactPopup
+        function openaddcontactPopup(){
+            const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const popupWidth = 600; // Width of the popup
+        const popupHeight = 450; // Height of the popup
+
+        const left = (screenWidth - popupWidth) / 2;
+        const top = (screenHeight - popupHeight) / 2;
+
+        const popupProps = `
+            width=${popupWidth},
+            height=${popupHeight},
+            left=${left},
+            top=${top},
+            resizable=no,
+            scrollbars=no,
+            status=no,
+            toolbar=no,
+            location=no,
+            menubar=no
+        `;
+        
+        addcontactPopup = window.open('/addcontact', 'Popup', popupProps);
+        }
+		if (addcontactPopup) {
+        // Check every second if the window is closed
+        const interval = setInterval(() => {
+            if (addcontactPopup.closed) {
+                refreshDashboard();
+                clearInterval(interval); // Stop the interval when the window is closed
+                console.log('Popup window closed.');
+                // You can perform other actions here after the popup is closed
+            }
+        }, 1000); // Check every 1 second (you can adjust the interval as needed)
+    }
+	function openEditContact(name, number) {
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const popupWidth = 1000; // Width of the popup
+    const popupHeight = 900; // Height of the popup
+
+    const left = (screenWidth - popupWidth) / 2;
+    const top = (screenHeight - popupHeight) / 2;
+
+    const popupProps = `
+        width=${popupWidth},
+        height=${popupHeight},
+        left=${left},
+        top=${top},
+        resizable=no,
+        scrollbars=no,
+        status=no,
+        toolbar=no,
+        location=no,
+        menubar=no
+    `;
+	const encodedNumber = encodeURIComponent(number);
+
+    const editWindow = window.open(`/editcontact?name=${name}&number=${encodedNumber}`, 'EditContactPopup', popupProps);
+
+    if (editWindow) {
+        // Check if the window is closed
+        const interval = setInterval(() => {
+            if (editWindow.closed) {
+                // Perform actions after the popup is closed (e.g., refresh or update data)
+                clearInterval(interval);
+                console.log('Edit contact popup closed.');
+                // You can perform other actions here after the popup is closed
+            }
+        }, 1000);
+    }
+}
+
+
+</script>
+</html>

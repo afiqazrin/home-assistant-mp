@@ -10,9 +10,13 @@ from datetime import datetime
 import time
 from whatsapp import send_message
 from texttospeech import speak
-from bulb import setBulbBrightness
-
+from bulb import setBulbBrightness, turnOnLightBulb, turnOffLightBulb
+bulbThread = None
+def bulb_thread_function(y_dist):
+    print("Thread started: ", y_dist)
+    setBulbBrightness(y_dist)
 def process_frame(frame_type):
+    global bulbThread
     webcam = cv2.VideoCapture(0)
     bg_subtractor = cv2.createBackgroundSubtractorMOG2()
     hands = mp.solutions.mediapipe.solutions.hands.Hands()
@@ -187,17 +191,16 @@ def process_frame(frame_type):
                                 x2 = x
                                 y2 = y
                     cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 5)
-                   
-                    def bulb_thread_function():
-                        y_dist = abs(y2 - y1)/3
-                        if y_dist < 12:
-                            y_dist = 0
-                        print("Thread started: ", y_dist)
-                        setBulbBrightness(y_dist)
-
+                    y_dist = round(abs(y2 - y1) / 3, 0)
+                    if y_dist < 12:
+                        y_dist = 0
+                    if y_dist >100:
+                        y_dist = 100
+                    if bulbThread is None or not bulbThread.is_alive():
+                        bulbThread = threading.Thread(target=bulb_thread_function, args=(y_dist,))
+                        bulbThread.start()
+                        # time.sleep(5)
                     # Create and start the thread
-                    bulbThread = threading.Thread(target=bulb_thread_function)
-                    bulbThread.start()
                 cv2.imshow("Light Bulb Control", frame)
         # Display the processed frame
         # 10 ms delay before capturing next frame
