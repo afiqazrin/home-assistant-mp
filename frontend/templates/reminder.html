@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <meta charset="UTF-8">
-    <title>Alarm</title>
+    <title>Reminder</title>
     <style>
         body {
             background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
@@ -128,7 +128,7 @@
     <div class="table-container">
         <div class="tab1-container">
             <table>
-                <caption>All Alarm</caption>
+                <caption>All Reminder</caption>
                 <tr>
                     <th>Description</th>
                     <th>Time</th>
@@ -145,10 +145,10 @@
 										<i class="fas fa-pencil-alt"></i> <!-- Font Awesome pencil icon -->
 									</button>
 
-									<form action="/deletealarm" method="post">
+									<form action="/deletereminder" method="post">
 										<input type="hidden" name="description" value="{{ row[2] }}">
 										<input type="hidden" name="time" value="{{ row[1] }}">
-										<button class="delete-button" type="submit" onclick='refreshAlarm()'>
+										<button class="delete-button" type="submit" onclick='refreshReminder()'>
 											<i class="fas fa-trash-alt"></i> <!-- Font Awesome trashcan icon -->
 										</button>
 									</form>
@@ -188,7 +188,7 @@
             menubar=no
         `;
         
-        popupWindow = window.open('/addalarm', 'Popup', popupProps);
+        popupWindow = window.open('/addreminder', 'Popup', popupProps);
         }
 		if (popupWindow) {
         // Check every second if the window is closed
@@ -223,7 +223,7 @@ function openEditPopup(description, time) {
         menubar=no
     `;
 
-    const editWindow = window.open(`/editalarm?description=${description}&time=${time}`, 'EditPopup', popupProps);
+    const editWindow = window.open(`/editreminder?description=${description}&time=${time}`, 'EditPopup', popupProps);
 
     if (editWindow) {
         // Check if the window is closed

@@ -23,19 +23,19 @@ async def allreminder():
     reminder = cursor_obj.fetchall()
     connection_obj.close()
     return reminder
-def deletealarm(description ,time):
+def deletereminder(description ,time):
     connection_obj =sqlite3.connect(r"/home/afiq/home-assistant-mp/database/reminders.db", check_same_thread=False)
     cursor_obj = connection_obj.cursor()
     cursor_obj.execute("DELETE FROM reminders WHERE reminder_text = ? AND reminder_time = ?", (description, time))
     connection_obj.commit()
     connection_obj.close()
-def insertalarm(desc,time):
+def insertreminder(desc,time):
     connection_obj =sqlite3.connect(r"/home/afiq/home-assistant-mp/database/reminders.db", check_same_thread=False)
     cursor_obj = connection_obj.cursor()
     cursor_obj.execute("insert into reminders(reminder_time,reminder_text) values(?,?)", (time, desc))
     connection_obj.commit()
     connection_obj.close()
-def editalarm(updated_description, updated_time, original_description, original_time):
+def editreminder(updated_description, updated_time, original_description, original_time):
     connection_obj =sqlite3.connect(r"/home/afiq/home-assistant-mp/database/reminders.db", check_same_thread=False)
     cursor_obj = connection_obj.cursor()
     cursor_obj.execute("UPDATE reminders SET reminder_text=?, reminder_time=? WHERE reminder_text=? AND reminder_time=?",

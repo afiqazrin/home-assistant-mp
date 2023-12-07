@@ -41,7 +41,7 @@
             var reminderTime = document.getElementById('reminder_time').value;
 
             // Send data only when Confirm is clicked
-            fetch('/submitalarm', {
+            fetch('/submitreminder', {
                 method: 'POST',
                 body: JSON.stringify({ description: description, reminderTime: reminderTime }),
                 headers: {

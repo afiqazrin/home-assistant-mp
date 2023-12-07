@@ -8,7 +8,7 @@ reminders_db = sqlite3.connect(r"database/reminders.db")
 def insert_contact_db(name, number):
     # create cursor object to send sql commands to contacts_db
     cursor = contacts_db.cursor()
-    cursor.execute("INSERT INTO contacts VALUES (?, ?)", (name, number, 0))
+    cursor.execute("INSERT INTO contacts VALUES (?,?,?)", (name, number, 0))
     contacts_db.commit()
 
 
@@ -20,6 +20,7 @@ def read_contact_db(name):
         print(number)
         return number
 
+
 def find_emergency_contact():
     cursor = contacts_db.cursor()
     cursor.execute("SELECT * FROM contacts WHERE isEmergency = 1 LIMIT 1;")
@@ -27,11 +28,14 @@ def find_emergency_contact():
     number = emergency_contact[1]
     print(emergency_contact[1])
     return number
+
+
 def is_emergency_saved():
     cursor = contacts_db.cursor()
     cursor.execute("SELECT * FROM contacts WHERE isEmergency = 1 LIMIT 1;")
     emergency_contact = cursor.fetchone()
     return emergency_contact is not None
+
 
 def insert_reminder_db(reminder_time, reminder_text):
     cursor = reminders_db.cursor()

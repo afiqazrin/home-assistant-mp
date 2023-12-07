@@ -5,9 +5,9 @@ import threading
 import schedule
 import time
 import webbrowser
-from ReminderSQL import top3rang, top3coming, allreminder, deletealarm, insertalarm, editalarm
+from ReminderSQL import top3rang, top3coming, allreminder, deletereminder, insertreminder, editreminder
 from ContactSQL import allContact,deletecontact,adddbcontact,editcontact
-app = Flask(__name__, static_folder=r"/home/afiq/home-assistant-mp/frontend")
+app = Flask(__name__, static_folder=r"/home/afiq/mp-2/home-assistant-mp/frontend")
 from datetime import datetime
 
 
@@ -19,7 +19,7 @@ async def update_dashboard():
     global tempc, desc, humid
     tempc, desc, humid = await dashboardsent()
     
-async def update_alarm():
+async def update_reminder():
     global top_3,future_3
     top_3=await top3rang()
     future_3=await top3coming()
@@ -33,7 +33,7 @@ async def getcontact():
 def job():
     asyncio.run(update_dashboard())
 def job2():
-    asyncio.run(update_alarm())
+    asyncio.run(update_reminder())
 def job3():
     asyncio.run(getreminder())
 def job4():
@@ -107,11 +107,11 @@ def dashboard():
         
         
 # frontend/templates/png/temp2.png
-@app.route('/alarm')
-def alarm():
+@app.route('/reminder')
+def reminder():
     job3()
     reminder = asyncio.run(allreminder())  # Retrieve reminders directly
-    return render_template('alarm.html', reminder=reminder)
+    return render_template('reminder.html', reminder=reminder)
 
 @app.route('/contact')
 def contact():
@@ -119,11 +119,11 @@ def contact():
     contact=asyncio.run(allContact())
     return render_template('contact.html', contact=contact)
 
-@app.route('/deletealarm', methods=['POST'])
-def delete_alarm_item():
+@app.route('/deletereminder', methods=['POST'])
+def delete_reminder_item():
     description = request.form.get('description')
     time = request.form.get('time')
-    deletealarm(description, time)
+    deletereminder(description, time)
     return '', 204 
 @app.route('/deletecontact', methods=['POST'])
 def delete_contact_item():
@@ -131,7 +131,7 @@ def delete_contact_item():
     number = request.form.get('unumber')
     deletecontact(name ,number)
     return '', 204 
-@app.route('/submitalarm', methods=['POST'])
+@app.route('/submitreminder', methods=['POST'])
 def submit():
     data = request.json  # Get the JSON data sent from the popup
     desc = data.get('description')
@@ -140,24 +140,24 @@ def submit():
     formatted_datetime = dt_object.strftime('%Y-%m-%d %H:%M:%S')
 
 
-    insertalarm(desc,formatted_datetime)
+    insertreminder(desc,formatted_datetime)
     # ...
 
     return '',204  # Send a response (optional)
-@app.route('/addalarm')
-def addalarm():
-    return render_template('addalarm.html')
+@app.route('/addreminder')
+def addreminder():
+    return render_template('addreminder.html')
 
 @app.route('/addcontact')
 def addcontact():
     return render_template('addcontact.html')
 
-@app.route('/editalarm', methods=['GET', 'POST'])
-def edit_alarm():
+@app.route('/editreminder', methods=['GET', 'POST'])
+def edit_reminder():
     if request.method == 'GET':
         description = request.args.get('description')
         time = request.args.get('time')
-        return render_template('edit_alarm.html', description=description, time=time)
+        return render_template('edit_reminder.html', description=description, time=time)
     elif request.method == 'POST':
         original_description = request.form.get('original_description')
         original_time = request.form.get('original_time')
@@ -165,7 +165,7 @@ def edit_alarm():
         updated_time = request.form.get('time')
         dt_object = datetime.strptime(updated_time, '%Y-%m-%dT%H:%M')
         formatted_datetime = dt_object.strftime('%Y-%m-%d %H:%M:%S')
-        editalarm(updated_description, formatted_datetime, original_description, original_time)
+        editreminder(updated_description, formatted_datetime, original_description, original_time)
         return '',204
 @app.route('/addedcontact', methods=['POST'])
 def submit_form():

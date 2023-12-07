@@ -10,7 +10,7 @@ def speech_to_text():
             print("Adjusting for ambience noise, please wait...")
             r.adjust_for_ambient_noise(source)
             print("Listening...")
-            audio = r.listen(source)
+            audio = r.listen(source, phrase_time_limit=5)
             try:
                 text = r.recognize_google(audio)
                 print(text)

@@ -1,22 +1,27 @@
-import schedule
 from dateutil import parser
 from texttospeech import speak
+from datetime import datetime
+import time
+
 def check_reminder(columns):
     for column in columns:
         reminder_time = column[0]
         reminder_text = column[1]
-        # print(reminder_time)
-        # print(reminder_text)
-        parsed_reminder_time = parser.parse(reminder_time)
-        schedule_reminders(parsed_reminder_time, reminder_text)
+        # print("Reminder Time:", reminder_time)
+        # print("Reminder Text:", reminder_text)
 
     while True:
-        schedule.run_pending()
+        current_datetime = datetime.now()
+        formatted_nowtime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
         
-def schedule_reminders(reminder_time, reminder_text):
-    schedule.every().day.at(reminder_time.strftime('%H:%M')).do(reminder_callback, reminder_text, reminder_time, reminder_text).tag('reminder').tag('first')
-    # schedule.every().day.at(reminder_time.strftime('%H:%M')).do(reminder_callback, reminder_text, reminder_time, reminder_text).tag('reminder').tag('second')
+        # Check if the current time matches any reminder time
+        for column in columns:
+            reminder_time = column[0]
+            reminder_text = column[1]
+            # print("Reminder_time: ", reminder_time, "Now time: ", formatted_nowtime)
+            if formatted_nowtime == reminder_time:
+                reminder_callback(reminder_text)
+                time.sleep(1)
 
-def reminder_callback(message, reminder_time, reminder_text):
-    speak(message)
-    
+def reminder_callback(reminder_text):
+    speak(reminder_text)

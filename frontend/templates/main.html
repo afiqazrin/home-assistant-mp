@@ -73,7 +73,7 @@
 
 <nav>
     <a href="#" onclick="loadPage('http://127.0.0.1:5000/dashboard')" id="dashboardLink">Dashboard</a>
-    <a href="#" onclick="loadPage('http://127.0.0.1:5000/alarm')" id="alarmLink">Alarms</a>
+    <a href="#" onclick="loadPage('http://127.0.0.1:5000/reminder')" id="reminderLink">Reminders</a>
     <a href="#" onclick="loadPage('http://127.0.0.1:5000/contact')" id="contactLink">Contact</a>
 	<div id="clock"></div>
 
@@ -87,7 +87,7 @@
 
 <script>
 var activePage = '';
-var alarmLoaded = false; // Flag to check if alarm page has been loaded
+var reminderLoaded = false; // Flag to check if reminder page has been loaded
 var refreshInterval; // Variable to store the interval ID
 
 // Function to load a page
@@ -105,7 +105,7 @@ function loadPage(page) {
             updateActiveLink(page);
 
             // Set a new refresh interval after loading the page
-            if (activePage.includes('dashboard') || activePage.includes('alarm') || activePage.includes('contact')) {
+            if (activePage.includes('dashboard') || activePage.includes('reminder') || activePage.includes('contact')) {
 				refreshInterval = setInterval(refreshDashboard, 5000);
 			}
         }
@@ -126,19 +126,19 @@ function updateActiveLink(activePage) {
     });
 }
 
-// Function to refresh the dashboard or alarm content
+// Function to refresh the dashboard or reminder content
 function refreshDashboard() {
     if (activePage.includes('dashboard')) {
         loadPage('http://127.0.0.1:5000/dashboard');
         console.log("Refreshing Dashboard!");
 		openFullscreen();
-    } else if (activePage.includes('alarm')) {
-        loadPage('http://127.0.0.1:5000/alarm');
-        console.log("Loading Alarm!");
+    } else if (activePage.includes('reminder')) {
+        loadPage('http://127.0.0.1:5000/reminder');
+        console.log("Loading Reminder!");
 		openFullscreen();
     } else if (activePage.includes('contact')) {
         loadPage('http://127.0.0.1:5000/contact');
-        console.log("Loading Alarm!");
+        console.log("Loading Reminder!");
 		openFullscreen();
     }
 }
@@ -183,7 +183,7 @@ let popupWindow;
             menubar=no
         `;
         
-        popupWindow = window.open('/addalarm', 'Popup', popupProps);
+        popupWindow = window.open('/addreminder', 'Popup', popupProps);
         }
 		if (popupWindow) {
         // Check every second if the window is closed
@@ -254,7 +254,7 @@ function openEditPopup(description, time) {
         menubar=no
     `;
 
-    const editWindow = window.open(`/editalarm?description=${description}&time=${time}`, 'EditPopup', popupProps);
+    const editWindow = window.open(`/editreminder?description=${description}&time=${time}`, 'EditPopup', popupProps);
 
     if (editWindow) {
         // Check if the window is closed

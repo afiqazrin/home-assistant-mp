@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Alarm</title>
+    <title>Edit Reminder</title>
     <style>
         body {
             display: flex;
@@ -37,9 +37,9 @@
     </style>
 </head>
 <body>
-    <h1>Edit Alarm</h1>
+    <h1>Edit Reminder</h1>
     <div class="form-container">
-        <form id="editForm" action="/editalarm" method="post">
+        <form id="editForm" action="/editreminder" method="post">
             <label for="description">Description:</label><br>
             <input type="text" id="description" name="description" value="{{ description }}"><br>
             <label for="time">Reminder Time:</label><br>
@@ -48,7 +48,7 @@
             <input type="hidden" name="original_description" value="{{ description }}">
             <input type="hidden" name="original_time" value="{{ time }}">
             <!-- Submit and Close buttons -->
-            <input type="submit" value="Update Alarm">
+            <input type="submit" value="Update Reminder">
             <button type="button" onclick="closePopup()">Close</button>
         </form>
 		
@@ -65,7 +65,7 @@
 
             const formData = new FormData(event.target);
 
-            fetch('/editalarm', {
+            fetch('/editreminder', {
                 method: 'POST',
                 body: formData
             })
