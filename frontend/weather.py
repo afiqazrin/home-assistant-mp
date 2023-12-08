@@ -16,7 +16,7 @@ def get_ip():
             print(response.status_code)
             return None
     except requests.RequestException as e:
-        print(response.status_code)
+        # print(response.status_code)
         return None
 
 
@@ -32,7 +32,7 @@ def get_location():
             print(response.status_code)
             return None
     except requests.RequestException as e:
-        print(response.status_code)
+        # print(response.status_code)
         return None
 
 async def getweather(location):

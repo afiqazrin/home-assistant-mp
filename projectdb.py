@@ -20,7 +20,6 @@ def read_contact_db(name):
         print(number)
         return number
 
-
 def find_emergency_contact():
     cursor = contacts_db.cursor()
     cursor.execute("SELECT * FROM contacts WHERE isEmergency = 1 LIMIT 1;")
