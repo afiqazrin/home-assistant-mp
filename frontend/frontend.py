@@ -7,7 +7,7 @@ import time
 import webbrowser
 from ReminderSQL import top3rang, top3coming, allreminder, deletereminder, insertreminder, editreminder
 from ContactSQL import allContact,deletecontact,adddbcontact,editcontact
-app = Flask(__name__, static_folder=r"/home/afiq/mp-2/home-assistant-mp/frontend")
+app = Flask(__name__, static_folder=r"/home/afiq/home-assistant-mp/frontend")
 from datetime import datetime
 
 

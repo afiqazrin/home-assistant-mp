@@ -48,15 +48,16 @@ else:
 
 
 def save_emergency_contact():
-    speak("Save an emergency contact")
+    speak("Emergency contact not found")
     speak("Name of emergency contact to save")
-    emergency_name = speech_to_text()
+    emergency_name = speech_to_text().lower()
     speak("Number of emergency contact")
-    emergency_number = "+65" + speech_to_text()
+    number_input = speech_to_text()
+    emergency_number = "+65"+extract_phone_number(number_input)
     speak(
         f"Saving emergency contact {emergency_name} with number {emergency_number} in contacts"
     )
-    insert_contact_db(emergency_name, emergency_number)
+    insert_contact_db(emergency_name, emergency_number, 1)
 
 
 def extract_phone_number(input_string):
@@ -92,7 +93,7 @@ def main():
         # saving of contacts to use in sending message function
         if "save a contact" in text:
             speak("Name of contact to save")
-            name = speech_to_text()
+            name = speech_to_text().lower()
 
             speak("Number of contact")
             number_input = speech_to_text()
@@ -101,7 +102,7 @@ def main():
             number = "+65"+extract_phone_number(number_input)
 
             speak("Saving name {} with number {} in contacts".format(name, number))
-            insert_contact_db(name, number)
+            insert_contact_db(name, number, 0)
         # sending of message function
         elif "send a message" in text:
             speak("Who should I send a message to?")

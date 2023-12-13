@@ -124,7 +124,7 @@ def process_frame(frame_type):
             timediffmin = timedelta / 60
             # print(str(timediffmin))
             # alarm for time
-            if timediffmin > 1:
+            if timediffmin > 0.1:
                 # insert system will say alarm
                 insertnowtime()
                 count += 1

@@ -9,7 +9,7 @@ try:
     d = tinytuya.BulbDevice(
         dev_id="3866058070039f21ba4f",
         address="Auto",  # Or set to 'Auto' to auto-discover IP address
-        # local_key="v3V>@9SRwo`AZOth",
+        # local_key="v3V>@9SRwo`AZOth", 
         local_key="6Hi<F@t0NY[chr)<",
         version=3.3,
     )
@@ -55,4 +55,4 @@ def setBulbColor(color_name):
         speak("Sorry, I didn't recognize that color. Please try again.")
         color_name = speech_to_text()
 
-# turnOffLightBulb()
+turnOffLightBulb()
