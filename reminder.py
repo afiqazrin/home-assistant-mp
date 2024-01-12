@@ -2,7 +2,9 @@ from dateutil import parser
 from texttospeech import speak
 from datetime import datetime
 import time
-
+import vlc
+from pydub import AudioSegment
+from pydub.playback import play
 def check_reminder(columns):
     for column in columns:
         reminder_time = column[0]
@@ -24,4 +26,9 @@ def check_reminder(columns):
                 time.sleep(1)
 
 def reminder_callback(reminder_text):
+ 
+ 
+# for playing mp3 file
+    song = AudioSegment.from_mp3("sounds/reminder.mp3")
+    play(song)
     speak(reminder_text)

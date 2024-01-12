@@ -2,7 +2,6 @@ import pywhatkit
 import pyautogui
 import time
 import os
-from pynput.keyboard import Key, Controller
 
 
 from tkinter import *
@@ -12,13 +11,15 @@ screen_height= win.winfo_screenheight() # Gets the resolution (height) of your m
 
 def send_message(number, message):
     pywhatkit.sendwhatmsg_instantly(number, message, 15)
+    time.sleep(25)
     # pywhatkit.sendwhatmsg_instantly(number, message, 10, 15)
     #                                 )
     pyautogui.moveTo(screen_width * 0.694, screen_height* 0.964)
     pyautogui.click()
     pyautogui.press('enter')      
-    time.sleep(1)
+    time.sleep(5)
     pyautogui.hotkey("ctrl", "w")
     # pywhatkit creates/updates a txt file of all messages that has been sent through it everytime the function is run, this is unnecessary therefore we remove it                 
     with open('PyWhatKit_DB.txt', 'w') as f:
         os.remove('PyWhatKit_DB.txt')
+

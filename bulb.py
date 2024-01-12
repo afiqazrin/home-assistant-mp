@@ -3,14 +3,16 @@ import webcolors
 from texttospeech import speak
 from speechtotext import speech_to_text
 import time
-
-
+#using MERRICK WIFI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 try:
     d = tinytuya.BulbDevice(
-        dev_id="3866058070039f21ba4f",
+        # dev_id="3866058070039f21ba4f",
+        dev_id = "bffc781fe786dc9a83lvxc",
         address="Auto",  # Or set to 'Auto' to auto-discover IP address
         # local_key="v3V>@9SRwo`AZOth", 
-        local_key="6Hi<F@t0NY[chr)<",
+        # local_key="6Hi<F@t0NY[chr)<",
+        # local_key="E1n{L#Gc~<FH-*?D",
+        local_key = "xuCNYwf'fEkCUt.<",
         version=3.3,
     )
     print(d.status())
@@ -55,4 +57,4 @@ def setBulbColor(color_name):
         speak("Sorry, I didn't recognize that color. Please try again.")
         color_name = speech_to_text()
 
-turnOffLightBulb()
+# turnOffLightBulb()

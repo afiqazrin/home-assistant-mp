@@ -38,15 +38,12 @@ def is_emergency_saved():
 
 
 def insert_reminder_db(reminder_time, reminder_text):
-    try:
         cursor = reminders_db.cursor()
         cursor.execute(
             "INSERT INTO reminders (reminder_time, reminder_text) VALUES (?, ?)",
             (reminder_time, reminder_text),
         )
         reminders_db.commit()
-    except Exception as e:
-        speak()
 
 def read_reminder_db():
     cursor = reminders_db.cursor()

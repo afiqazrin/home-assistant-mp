@@ -34,7 +34,7 @@
             padding: 20px 16px;
             text-decoration: none;
             transition: background-color 0.3s;
-			height:100%
+			height:100%;
 			line-height: 60px; /* Adjust line height to center text vertically */
 			font-family: Consolas;
 			font-size: 28px;
@@ -92,7 +92,7 @@ var refreshInterval; // Variable to store the interval ID
 
 // Function to load a page
 function loadPage(page) {
-	openFullscreen();
+	//openFullscreen();
     if (refreshInterval) {
         clearInterval(refreshInterval); // Clear the refresh interval
     }
@@ -171,10 +171,8 @@ let popupWindow;
         const top = (screenHeight - popupHeight) / 2;
 
         const popupProps = `
-            width=${popupWidth},
-            height=${popupHeight},
-            left=${left},
-            top=${top},
+            width=${screenWidth},
+            height=${screenHeight},
             resizable=no,
             scrollbars=no,
             status=no,
@@ -207,10 +205,8 @@ let popupWindow;
         const top = (screenHeight - popupHeight) / 2;
 
         const popupProps = `
-            width=${popupWidth},
-            height=${popupHeight},
-            left=${left},
-            top=${top},
+            width=${screenWidth},
+            height=${screenHeight},
             resizable=no,
             scrollbars=no,
             status=no,
@@ -242,10 +238,8 @@ function openEditPopup(description, time) {
     const top = (screenHeight - popupHeight) / 2;
 
     const popupProps = `
-        width=${popupWidth},
-        height=${popupHeight},
-        left=${left},
-        top=${top},
+        width=${screenWidth},
+        height=${screenHeight},
         resizable=no,
         scrollbars=no,
         status=no,
@@ -281,10 +275,8 @@ function openEditContact(name, number) {
     const top = (screenHeight - popupHeight) / 2;
 
     const popupProps = `
-        width=${popupWidth},
-        height=${popupHeight},
-        left=${left},
-        top=${top},
+        width=${screenWidth},
+        height=${screenHeight},
         resizable=no,
         scrollbars=no,
         status=no,
@@ -314,7 +306,6 @@ window.onload = function () {
     loadPage('http://127.0.0.1:5000/dashboard');
     updateClock(); // Initial clock update
     setInterval(updateClock, 1000); // Update clock every second
-	openFullscreen();
 };
 </script>
 </body>

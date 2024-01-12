@@ -10,22 +10,28 @@ from datetime import datetime
 import time
 from whatsapp import send_message
 from texttospeech import speak
+from picamera2 import Picamera2
 from bulb import setBulbBrightness, turnOnLightBulb, turnOffLightBulb
 bulbThread = None
+
 def bulb_thread_function(y_dist):
     print("Thread started: ", y_dist)
     setBulbBrightness(y_dist)
 def process_frame(frame_type):
+    piCam = Picamera2()
+    piCam.preview_configuration.main.size=(320,240)
+    piCam.preview_configuration.main.format="RGB888"
+    piCam.preview_configuration.align()
+    piCam.configure("preview")
+    piCam.start()
     global bulbThread
-    webcam = cv2.VideoCapture(0)
     bg_subtractor = cv2.createBackgroundSubtractorMOG2()
     hands = mp.solutions.mediapipe.solutions.hands.Hands()
     drawing_utils = mp.solutions.mediapipe.solutions.drawing_utils
     x1 = y1 = x2 = y2 = 0
     count = 0
     while True:
-        _, frame = webcam.read()
-
+        frame=piCam.capture_array()
         if frame_type == "system_control":
             frame_height, frame_width, _ = frame.shape
             # convert BGR image to RGB image
@@ -69,19 +75,20 @@ def process_frame(frame_type):
                 if x_dist == 0:
                     x_dist = 1
                 if x_dist > y_dist:
-                    call(
-                        [
-                            "sudo",
-                            "brightnessctl",
-                            "-d",
-                            "intel_backlight",
-                            "s",
-                            str(x_dist) + "%",
-                        ],
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                    )
-                    print("Horizontal hand")
+                    # call(
+                    #     [
+                    #         "sudo",
+                    #         "brightnessctl",
+                    #         "-d",
+                    #         "intel_backlight",
+                    #         "s",
+                    #         str(x_dist) + "%",
+                    #     ],
+                    #     stdout=subprocess.DEVNULL,
+                    #     stderr=subprocess.DEVNULL,
+                    # )
+                    # print("Horizontal hand")
+                    print()
                 # Add your code for horizontal hand here
                 else:
                     call(
@@ -124,11 +131,12 @@ def process_frame(frame_type):
             timediffmin = timedelta / 60
             # print(str(timediffmin))
             # alarm for time
-            if timediffmin > 0.1:
+            if timediffmin > 0.5:
                 # insert system will say alarm
                 insertnowtime()
                 count += 1
                 print(count)
+                speak("Please make yourself visible infront of the camera")
                 if count == 3:
                     send_message(find_emergency_contact(), f"Person is not detected by camera as of {now1}")
                     # insert text
@@ -151,7 +159,10 @@ def process_frame(frame_type):
                         frame, (x, y), (x + w, y + h), (0, 255, 0), 2
                     )  # drawing rectangle on movement object
                     insertnowtime()
+                    
+                    count = 0
             cv2.imshow("Person Detection", frame)
+            pass
         elif frame_type == "bulb_control": 
                 frame_height, frame_width, _ = frame.shape
                 # convert BGR image to RGB image
@@ -208,5 +219,4 @@ def process_frame(frame_type):
         # 27 is escape key, exits from the webcam
         if key == 27:
             break
-    webcam.release()
     cv2.destroyAllWindows()

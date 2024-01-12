@@ -1,6 +1,7 @@
 from speechtotext import speech_to_text
 from whatsapp import send_message
 from texttospeech import speak
+from characterai import send_query
 from projectdb import (
     insert_contact_db,
     read_contact_db,
@@ -15,9 +16,8 @@ import threading
 from multiprocessing import Process
 from dateutil import parser
 import time
-import websockets
+# import websockets
 import queue
-from characterai import PyCAI
 from bulb import turnOffLightBulb, turnOnLightBulb, setBulbColor
 import re
 
@@ -34,18 +34,6 @@ help_keywords = [
     "urgent help",
 ]
 question_keywords = ["who", "what", "where", "why", "when", "how"]
-isBulbOn = False
-client = PyCAI("4176928702b3a40d9b26aca1a72bb3de68c2107c")
-char = "Hpk0GozjACb3mtHeAaAMb0r9pcJGbzF317I_Ux_ALOA"
-chat = client.chat.get_chat(char)
-
-participants = chat["participants"]
-
-if not participants[0]["is_human"]:
-    tgt = participants[0]["user"]["username"]
-else:
-    tgt = participants[1]["user"]["username"]
-
 
 def save_emergency_contact():
     speak("Emergency contact not found")
@@ -53,7 +41,7 @@ def save_emergency_contact():
     emergency_name = speech_to_text().lower()
     speak("Number of emergency contact")
     number_input = speech_to_text()
-    emergency_number = "+65"+extract_phone_number(number_input)
+    emergency_number = "+"+extract_phone_number(number_input)
     speak(
         f"Saving emergency contact {emergency_name} with number {emergency_number} in contacts"
     )
@@ -67,16 +55,13 @@ def extract_phone_number(input_string):
     phone_number = re.sub(digit_regex, "", input_string)
     return phone_number
 
-
 def main():
     global isBulbOn
     # Check if the emergency contact has already been saved
     if not is_emergency_saved():
-        print("emergency contact not saved")
         save_emergency_contact()
     else:
         find_emergency_contact()
-        print("emergency contact saved")
 
     person_detection_process = Process(target=process_frame, args=("person_detection",))
     person_detection_process.start()
@@ -99,7 +84,7 @@ def main():
             number_input = speech_to_text()
 
             # Extract only digits from the input phone number
-            number = "+65"+extract_phone_number(number_input)
+            number = "+"+extract_phone_number(number_input)
 
             speak("Saving name {} with number {} in contacts".format(name, number))
             insert_contact_db(name, number, 0)
@@ -116,13 +101,18 @@ def main():
             send_message(number, message)
         # setting a reminder function
         elif "set a reminder" in text:
-            speak(f"What reminder do you want to set?")
+            speak("What reminder do you want to set?")
             reminder_text = speech_to_text()
-            speak(f"What is the time you want to set for this reminder?")
-            reminder_time = speech_to_text()
-            parsed_reminder_time = parser.parse(reminder_time)
-            insert_reminder_db(parsed_reminder_time, reminder_text)
-            speak("Reminder has been set")
+            while True:
+                speak("What is the time you want to set for this reminder?")
+                reminder_time = speech_to_text()
+                try:
+                    parsed_reminder_time = parser.parse(reminder_time)
+                    insert_reminder_db(parsed_reminder_time, reminder_text)
+                    speak("Reminder has been set")
+                    break  # Exit the loop if the reminder is successfully set
+                except ValueError:
+                    speak("Incorrect time format, please try again")
         # controling of system controls such as volume and screen brightness
         elif "adjust system controls" in text:
             speak("Adjust systems control function started")
@@ -183,14 +173,12 @@ def main():
                     break
         # emergency sos function
         elif any(keyword in text for keyword in help_keywords):
-            pywhatkit(find_emergency_contact(), "Person requires immediate assistance")
+            send_message(find_emergency_contact(), "Person requires immediate assistance")
         elif any(keyword in text for keyword in question_keywords):
-            data = client.chat.send_message(chat["external_id"], tgt, text)
-            name = data["src_char"]["participant"]["name"]
-            result = data["replies"][0]["text"]
-            print(result)
-            speak(result)
-
+            try:
+                send_query(text)
+            except:
+                speak("Couldn't connect to Character AI server. Please try again later.")
 
 if __name__ == "__main__":
     main()
