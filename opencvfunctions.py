@@ -19,7 +19,7 @@ def bulb_thread_function(y_dist):
     setBulbBrightness(y_dist)
 def process_frame(frame_type):
     piCam = Picamera2()
-    piCam.preview_configuration.main.size=(320,240)
+    piCam.preview_configuration.main.size=(1024,768)
     piCam.preview_configuration.main.format="RGB888"
     piCam.preview_configuration.align()
     piCam.configure("preview")

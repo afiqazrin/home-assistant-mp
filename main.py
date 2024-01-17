@@ -34,7 +34,7 @@ help_keywords = [
     "urgent help",
 ]
 question_keywords = ["who", "what", "where", "why", "when", "how"]
-
+isBulbOn = False
 def save_emergency_contact():
     speak("Emergency contact not found")
     speak("Name of emergency contact to save")

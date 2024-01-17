@@ -9,7 +9,7 @@ def speak(command):
     engine.setProperty("volume", 1.0)  # setting up volume level  between 0 and 1
     engine.setProperty("voice", "english")
     rate = engine.getProperty("rate")  # getting details of current speaking rate
-    engine.setProperty("rate", 190)  # setting up new voice rate
+    engine.setProperty("rate", 150)  # setting up new voice rate
     engine.say(command)
     engine.runAndWait()
     
