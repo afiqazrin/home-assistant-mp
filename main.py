@@ -9,6 +9,7 @@ from projectdb import (
     read_reminder_db,
     is_emergency_saved,
     find_emergency_contact,
+    read_bulbs_db
 )
 from reminder import check_reminder
 from opencvfunctions import process_frame
@@ -18,9 +19,8 @@ from dateutil import parser
 import time
 # import websockets
 import queue
-from bulb import turnOffLightBulb, turnOnLightBulb, setBulbColor
+from bulb import initLightBulb, turnOffLightBulb, turnOnLightBulb, setBulbColor
 import re
-
 help_keywords = [
     "help",
     "assist",
@@ -138,6 +138,8 @@ def main():
             while read_bulbs_db(bulb_choice) == None:
                 speak("Bulb not found in database, please try again")
                 bulb_choice = speech_to_text().lower()
+            device_id, local_key = read_bulbs_db(bulb_choice)
+            initLightBulb(device_id, local_key)
             speak("Light bulb control function started")
             while True:
                 control_choice = speech_to_text()
