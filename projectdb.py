@@ -3,7 +3,7 @@ from datetime import datetime
 from speechtotext import speech_to_text
 contacts_db = sqlite3.connect(r"database/contacts.db")
 reminders_db = sqlite3.connect(r"database/reminders.db")
-
+bulbs_db = sqlite3.connect(r"database/bulbs.db")
 
 def insert_contact_db(name, number, isEmergency):
     # create cursor object to send sql commands to contacts_db
@@ -89,3 +89,15 @@ def selectNewestTime():
     cursor_obj.execute("""SELECT * FROM LastActiveTime order by Time desc Limit 1""")
     output = cursor_obj.fetchall()
     return output
+
+def read_bulbs_db(name):
+    cursor = bulbs_db.cursor()
+    bulbs_command = cursor.execute(f"SELECT * FROM bulbs WHERE Name = '{name}'")
+    for column in bulbs_command:
+        device_id = column[1]
+        local_key = column[2]
+        # print(device_id)
+        # print(local_key)
+        return device_id, local_key
+    
+

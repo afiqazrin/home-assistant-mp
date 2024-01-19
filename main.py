@@ -132,19 +132,24 @@ def main():
             speak("Person detection started")
 
         # controlling of Tuya Light Bulb
-        elif "adjust light bulb" in text:
-            speak("Adjust light bulb control function started")
+        elif "control light bulb" in text:
+            speak("What lightbulb do you want to control?")
+            bulb_choice = speech_to_text()
+            while read_bulbs_db(bulb_choice) == None:
+                speak("Bulb not found in database, please try again")
+                bulb_choice = speech_to_text().lower()
+            speak("Light bulb control function started")
             while True:
                 control_choice = speech_to_text()
-                if "switch on the light bulb" in control_choice:
+                if "switch on" in control_choice:
                     speak("Turning on lightbulb")
                     turnOnLightBulb()
                     isBulbOn = True
-                elif "switch off the light bulb" in control_choice:
+                elif "switch off" in control_choice:
                     speak("Turning off lightbulb")
                     turnOffLightBulb()
                     isBulbOn = False
-                elif "change the light bulb color" in control_choice:
+                elif "change color" in control_choice:
                     if isBulbOn == False:
                         turnOnLightBulb()
                     speak("What color do you want to set?")
