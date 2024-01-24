@@ -7,6 +7,7 @@ import time
 import webbrowser
 from ReminderSQL import top3rang, top3coming, allreminder, deletereminder, insertreminder, editreminder
 from ContactSQL import allContact,deletecontact,adddbcontact,editcontact
+from BulbSQL import allBulb, deleteBulb,editBulb,addBulb, getrow
 app = Flask(__name__, static_folder=r"/home/pi/Desktop/home-assistant-mp/frontend")
 from datetime import datetime
 
@@ -29,6 +30,9 @@ async def getreminder():
 async def getcontact():
     global contact
     contact=await allContact()
+async def getbulb():
+    global bulb
+    contact=await allBulb()
 
 def job():
     asyncio.run(update_dashboard())
@@ -38,6 +42,8 @@ def job3():
     asyncio.run(getreminder())
 def job4():
     asyncio.run(getcontact())
+def job5():
+    asyncio.run(getbulb())
 # Schedule the job function to run every minute
 schedule.every(1).minutes.do(job)
 schedule.every(0.01).minutes.do(job2)
@@ -113,6 +119,12 @@ def reminder():
     reminder = asyncio.run(allreminder())  # Retrieve reminders directly
     return render_template('reminder.html', reminder=reminder)
 
+@app.route('/bulb')
+def bulb():
+    job5()
+    bulb = asyncio.run(allBulb())  # Retrieve reminders directly
+    return render_template('bulb.html', bulb=bulb)
+
 @app.route('/contact')
 def contact():
     job4
@@ -131,6 +143,11 @@ def delete_contact_item():
     number = request.form.get('unumber')
     deletecontact(name ,number)
     return '', 204 
+@app.route('/deletebulb', methods=['POST'])
+def delete_bulb():
+    Device_ID = request.form.get('Device_ID')
+    deleteBulb(Device_ID)
+    return '', 204 
 @app.route('/submitreminder', methods=['POST'])
 def submit():
     data = request.json  # Get the JSON data sent from the popup
@@ -147,6 +164,10 @@ def submit():
 @app.route('/addreminder')
 def addreminder():
     return render_template('addreminder.html')
+
+@app.route('/addbulbpage')
+def addbulbpage():
+    return render_template('addbulb.html')
 
 @app.route('/addcontact')
 def addcontact():
@@ -196,6 +217,31 @@ def edithtmlcontact():
         editcontact(updated_name,updated_no,original_name,original_phoneno)
         return '', 204
 
+@app.route('/addedbulb', methods=['POST'])
+def addbulb():
+    data = request.json  # Get the JSON data sent from the popup
+    name = data.get('name')
+    id = data.get('id')
+    key=data.get('key')
+    addBulb(name ,id, key)
+    # ...
+
+    return '',204  # Send a response (optional)
+@app.route('/editbulb', methods=['GET', 'POST'])
+def editbulb():
+    if request.method == 'GET':
+        data = request.args.get('data')
+        name,id,key=getrow(data)
+        print(data)
+
+        return render_template('editbulb.html', id=id,key=key,name=name)
+    elif request.method == 'POST':
+        oldid = request.form.get('oldid')
+        local_key = request.form.get('key')
+        name = request.form.get('name')
+        device_id = request.form.get('id')
+        editBulb(name,device_id,local_key,oldid)
+        return '', 204
 
 
 if __name__ == '__main__':

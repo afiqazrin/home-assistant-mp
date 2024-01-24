@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <meta charset="UTF-8">
-    <title>Reminder</title>
+    <title>Bulb</title>
     <style>
         body {
             background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
@@ -128,26 +128,27 @@
     <div class="table-container">
         <div class="tab1-container">
             <table>
-                <caption>All Reminder</caption>
+                <caption>All Bulbs</caption>
                 <tr>
-                    <th>Description</th>
-                    <th>Time</th>
-					<th>Action</th>
+                    <th>Name</th>
+                    <th>Device ID</th>
+					<th>Local Key</th>
+                    <th>Action</th>
                 </tr>
                 <tbody>
-                    {% for row in reminder %}
+                    {% for row in bulb %}
                         <tr>
-                            <td>{{row[2]}}</td>
+                            <td>{{row[0]}}</td>
                             <td>{{row[1]}}</td>
+                            <td>{{row[2]}}</td>
 							<td>
 								<div class="button-group">
-									<button class="edit-button" onclick="openEditPopup('{{ row[2] }}', '{{ row[1] }}')">
+									<button class="edit-button" onclick="openEditBulbPopup('{{ row[0] }}')">
 										<i class="fas fa-pencil-alt"></i> <!-- Font Awesome pencil icon -->
 									</button>
 
-									<form action="/deletereminder" method="post">
-										<input type="hidden" name="description" value="{{ row[2] }}">
-										<input type="hidden" name="time" value="{{ row[1] }}">
+									<form action="/deletebulb" method="post">
+										<input type="hidden" name="Device_ID" value="{{ row[1] }}">
 										<button class="delete-button" type="submit">
 											<i class="fas fa-trash-alt"></i> <!-- Font Awesome trashcan icon -->
 										</button>
@@ -161,7 +162,7 @@
             </table>
         </div>
     </div>
-	<div class="add-button" onclick="openPopup()"></div>
+	<div class="add-button" onclick="openBulbpopup()"></div>
 	
     <script>
 
@@ -188,7 +189,7 @@
             menubar=no
         `;
         
-        popupWindow = window.open('/addreminder', 'Popup', popupProps);
+        popupWindow = window.open('/addbulbpage', 'Popup', popupProps);
         }
 		if (popupWindow) {
         // Check every second if the window is closed
@@ -201,7 +202,7 @@
             }
         }, 1000); // Check every 1 second (you can adjust the interval as needed)
     }
-function openEditPopup(description, time) {
+function openEditBulbPopup(data) {
     const screenWidth = window.screen.width;
     const screenHeight = window.screen.height;
     const popupWidth = 1000; // Width of the popup
@@ -211,10 +212,10 @@ function openEditPopup(description, time) {
     const top = (screenHeight - popupHeight) / 2;
 
     const popupProps = `
-        width=${popupWidth},
-        height=${popupHeight},
-        left=${left},
-        top=${top},
+        width=${screenWidth},
+        height=${screenHeight},
+        left=no,
+        top=no,
         resizable=no,
         scrollbars=no,
         status=no,
@@ -222,13 +223,12 @@ function openEditPopup(description, time) {
         location=no,
         menubar=no
     `;
+    const editBulbWindow = window.open(`/editbulb?data=${data}`, 'EditBulbPopup', popupProps);
 
-    const editWindow = window.open(`/editreminder?description=${description}&time=${time}`, 'EditPopup', popupProps);
-
-    if (editWindow) {
+    if (editBulbWindow) {
         // Check if the window is closed
         const interval = setInterval(() => {
-            if (editWindow.closed) {
+            if (editBulbWindow.closed) {
                 refreshDashboard();
                 clearInterval(interval);
                 console.log('Edit popup closed.');

@@ -75,6 +75,7 @@
     <a href="#" onclick="loadPage('http://127.0.0.1:5000/dashboard')" id="dashboardLink">Dashboard</a>
     <a href="#" onclick="loadPage('http://127.0.0.1:5000/reminder')" id="reminderLink">Reminders</a>
     <a href="#" onclick="loadPage('http://127.0.0.1:5000/contact')" id="contactLink">Contact</a>
+    <a href="#" onclick="loadPage('http://127.0.0.1:5000/bulb')" id="contactLink">Bulb</a>
 	<div id="clock"></div>
 
 </nav>
@@ -105,7 +106,7 @@ function loadPage(page) {
             updateActiveLink(page);
 
             // Set a new refresh interval after loading the page
-            if (activePage.includes('dashboard') || activePage.includes('reminder') || activePage.includes('contact')) {
+            if (activePage.includes('dashboard') || activePage.includes('reminder') || activePage.includes('contact') || activePage.includes('bulb')) {
 				refreshInterval = setInterval(refreshDashboard, 5000);
 			}
         }
@@ -131,16 +132,21 @@ function refreshDashboard() {
     if (activePage.includes('dashboard')) {
         loadPage('http://127.0.0.1:5000/dashboard');
         console.log("Refreshing Dashboard!");
-		openFullscreen();
+		//openFullscreen();
     } else if (activePage.includes('reminder')) {
         loadPage('http://127.0.0.1:5000/reminder');
         console.log("Loading Reminder!");
-		openFullscreen();
+		//openFullscreen();
     } else if (activePage.includes('contact')) {
         loadPage('http://127.0.0.1:5000/contact');
         console.log("Loading Reminder!");
-		openFullscreen();
+		//openFullscreen();
+    }else if (activePage.includes('bulb')) {
+        loadPage('http://127.0.0.1:5000/bulb');
+        console.log("Loading bulb!");
+		//openFullscreen();
     }
+    
 }
 
 // Function to update the clock
@@ -158,6 +164,42 @@ function updateClock() {
 function formatTime(value) {
     return value < 10 ? "0" + value : value;
 }
+let BulbpopupWindow;
+        function openBulbpopup(){
+            const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const popupWidth = 400; // Width of the popup
+        const popupHeight = 300; // Height of the popup
+
+        const left = (screenWidth - popupWidth) / 2;
+        const top = (screenHeight - popupHeight) / 2;
+
+        const popupProps = `
+            width=${screenWidth},
+            height=${screenHeight},
+            left=no,
+            top=no,
+            resizable=no,
+            scrollbars=no,
+            status=no,
+            toolbar=no,
+            location=no,
+            menubar=no
+        `;
+        
+        BulbpopupWindow = window.open('/addbulbpage', 'Popup', popupProps);
+        }
+		if (BulbpopupWindow) {
+        // Check every second if the window is closed
+        const interval = setInterval(() => {
+            if (BulbpopupWindow.closed) {
+                refreshDashboard();
+                clearInterval(interval); // Stop the interval when the window is closed
+                console.log('Popup window closed.');
+                // You can perform other actions here after the popup is closed
+            }
+        }, 1000); // Check every 1 second (you can adjust the interval as needed)
+    }
 
 // Function to open popup
 let popupWindow;
@@ -300,6 +342,41 @@ function openEditContact(name, number) {
         }, 1000);
     }
 }
+function openEditBulbPopup(data) {
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const popupWidth = 1000; // Width of the popup
+    const popupHeight = 900; // Height of the popup
+
+    const left = (screenWidth - popupWidth) / 2;
+    const top = (screenHeight - popupHeight) / 2;
+
+    const popupProps = `
+        width=${screenWidth},
+        height=${screenHeight},
+        left=no,
+        top=no,
+        resizable=no,
+        scrollbars=no,
+        status=no,
+        toolbar=no,
+        location=no,
+        menubar=no
+    `;
+    const editBulbWindow = window.open(`/editbulb?data=${data}`, 'EditPopup', popupProps);
+
+    if (editBulbWindow) {
+        // Check if the window is closed
+        const interval = setInterval(() => {
+            if (editBulbWindow.closed) {
+                refreshDashboard();
+                clearInterval(interval);
+                console.log('Edit popup closed.');
+            }
+        }, 1000);
+    }
+}
+
 
 // Load dashboard on page load
 window.onload = function () {
