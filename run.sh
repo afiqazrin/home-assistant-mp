@@ -1,1 +1,0 @@
-python main.py & python frontend/frontend.py

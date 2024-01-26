@@ -157,7 +157,7 @@ def main():
                     speak("What color do you want to set?")
                     color = speech_to_text()
                     setBulbColor(color)
-                elif "adjust light bulb brightness" in control_choice:
+                elif "change brightness" in control_choice:
                     if isBulbOn == False:
                         turnOnLightBulb()
                     person_detection_process.terminate()
@@ -175,15 +175,15 @@ def main():
                     person_detection_process.start()
                     speak("Person detection started")
 
-                elif "exit" in control_choice:
+                elif "stop" in control_choice:
                     speak("Exiting light bulb control function")
                     break
         # emergency sos function
         elif any(keyword in text for keyword in help_keywords):
             send_message(find_emergency_contact(), "Person requires immediate assistance")
-        elif any(keyword in text for keyword in question_keywords):
+        elif any("hello" in text and keyword in text for keyword in question_keywords):
             try:
-                send_query(text)
+                send_query(text + " in one sentence and layman terms")
             except:
                 speak("Couldn't connect to Character AI server. Please try again later.")
 
