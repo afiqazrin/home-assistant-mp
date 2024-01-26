@@ -10,7 +10,6 @@ def get_ip():
     try:
         response = requests.get('https://api64.ipify.org?format=json')
         if response.status_code == 200:
-            print("abc")
             return response.json()["ip"]
         else:
             print(response.status_code)
@@ -26,7 +25,6 @@ def get_location():
         response = requests.get(f'https://ipapi.co/{ip_address}/json/')
         if response.status_code == 200:
             location_data = response.json().get("city")
-            print(location_data)
             return location_data
         else:
             print(response.status_code)
@@ -42,7 +40,6 @@ async def getweather(location):
             tempf = weather.current.temperature
             desc = weather.current.description
             humid=weather.current.humidity
-            print(tempf)
             return tempf, desc, humid
         except Exception as e:
             print(f"Error getting weather data: {e}")
@@ -62,5 +59,4 @@ async def dashboardsent():
 
           tempf, desc, humid = await getweather(townname)
           tempc = format((tempf - 32) * 5/9, '.2f')
-          print(str(tempc) + desc)
           return tempc, desc, humid

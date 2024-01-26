@@ -193,7 +193,6 @@ let BulbpopupWindow;
         // Check every second if the window is closed
         const interval = setInterval(() => {
             if (BulbpopupWindow.closed) {
-                refreshDashboard();
                 clearInterval(interval); // Stop the interval when the window is closed
                 console.log('Popup window closed.');
                 // You can perform other actions here after the popup is closed

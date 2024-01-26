@@ -191,7 +191,7 @@ def edit_reminder():
 @app.route('/addedcontact', methods=['POST'])
 def submit_form():
     if request.method == 'POST':
-        name = request.form['name']  # Getting the name field value
+        name = request.form['name'].lower()  # Getting the name field value
         country_code = request.form['countryCode']  # Getting the country code value
         phone_number = request.form['phoneNumber']  # Getting the phone number value
         fullnumber=country_code+phone_number
@@ -212,7 +212,7 @@ def edithtmlcontact():
     elif request.method == 'POST':
         original_name = request.form.get('contact_name')
         original_phoneno = request.form.get('contact_phone_number')
-        updated_name = request.form.get('name')
+        updated_name = request.form.get('name').lower()
         updated_no = request.form.get('phoneNumber')
         editcontact(updated_name,updated_no,original_name,original_phoneno)
         return '', 204

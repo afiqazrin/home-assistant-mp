@@ -13,6 +13,7 @@ from texttospeech import speak
 from picamera2 import Picamera2
 from bulb import setBulbBrightness, turnOnLightBulb, turnOffLightBulb
 bulbThread = None
+from multiprocessing import Process
 
 def bulb_thread_function(y_dist):
     print("Thread started: ", y_dist)
@@ -139,7 +140,9 @@ def process_frame(frame_type):
                 speak("Please make yourself visible infront of the camera")
                 if count == 3:
                     send_message(find_emergency_contact(), f"Person is not detected by camera as of {now1}")
-                    # insert text
+                    # person_detection_process = Process(target=process_frame, args=("person_detection",))
+                    # person_detection_process.start()
+                    # speak("Person detection started")                    
                     count = 0
             fg_mask = bg_subtractor.apply(frame)
 
