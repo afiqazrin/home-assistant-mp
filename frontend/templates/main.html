@@ -106,7 +106,7 @@ function loadPage(page) {
             updateActiveLink(page);
 
             // Set a new refresh interval after loading the page
-            if (activePage.includes('dashboard') || activePage.includes('reminder') || activePage.includes('contact') || activePage.includes('bulb')) {
+            if (activePage.includes('reminder') || activePage.includes('contact') || activePage.includes('bulb')) {
 				refreshInterval = setInterval(refreshDashboard, 5000);
 			}
         }
@@ -129,11 +129,12 @@ function updateActiveLink(activePage) {
 
 // Function to refresh the dashboard or reminder content
 function refreshDashboard() {
-    if (activePage.includes('dashboard')) {
-        loadPage('http://127.0.0.1:5000/dashboard');
-        console.log("Refreshing Dashboard!");
+    // if (activePage.includes('dashboard')) {
+    //     loadPage('http://127.0.0.1:5000/dashboard');
+    //     console.log("Refreshing Dashboard!");
 		//openFullscreen();
-    } else if (activePage.includes('reminder')) {
+    // } 
+    if (activePage.includes('reminder')) {
         loadPage('http://127.0.0.1:5000/reminder');
         console.log("Loading Reminder!");
 		//openFullscreen();
