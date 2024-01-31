@@ -47,19 +47,19 @@
     <div class="form-container">
         <form id="editContactForm" action="/editcontact" method="post">
             <!-- Input fields for contact information -->
-            <input type="hidden" id="Name" name="contact_name" value="{{ name }}">
-            <input type="hidden" id="Number" name="contact_phone_number" value="{{ number }}">
+            <input type="hidden" id="Name" name="contact_name" value="{{ name }}"  style="font-size:25px; height:25px;">
+            <input type="hidden" id="Number" name="contact_phone_number" value="{{ number }}" style="font-size:25px; height:25px;">
 
-            <label for="nameField">Name:</label>
-            <input type="text" id="nameField" name="name" value="{{ name }}" required><br><br>
+            <label for="nameField"  style="font-size:25px;">Name:</label>
+            <input type="text" id="nameField" name="name" value="{{ name }}" required  style="font-size:25px; height:25px;"><br><br>
 
-            <label for="phoneNumber">Phone Number:</label>
-            <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9+\-\s]*" value="{{ number }}" required><br><br>
+            <label for="phoneNumber"  style="font-size:25px;">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9+\-\s]*" value="{{ number }} "  style="font-size:25px; height:25px;" required><br><br>
 			
 
             <!-- Submit button and Close button -->
-            <input type="submit" value="UpdateContact">
-            <button id="closeButton" onclick="closePopup()">Close</button>
+            <input type="submit" value="UpdateContact" style="font-size:25px; height:40px;">
+            <button id="closeButton" onclick="closePopup()" style="font-size:25px; height:40px;">Close</button>
         </form>
     </div>
 

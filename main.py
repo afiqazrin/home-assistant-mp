@@ -183,7 +183,7 @@ def main():
             send_message(find_emergency_contact(), "Person requires immediate assistance")
         elif any("hello" in text and keyword in text for keyword in question_keywords):
             try:
-                send_query(text + " in one sentence and layman terms")
+                send_query(text + " in one sentence")
             except:
                 speak("Couldn't connect to Character AI server. Please try again later.")
 

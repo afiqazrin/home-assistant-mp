@@ -40,19 +40,19 @@
     <h1>Edit Bulb</h1>
     <div class="form-container">
         <form id="editForm" action="/editbulb" method="post">
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name" value="{{ name }}"><br>
-            <label for="id">Device ID:</label><br>
-            <input type="text" id="id" name="id" value="{{ id }}"><br>
-            <label for="key">Local Key:</label><br>
-            <input type="text" id="key" name="key" value="{{ key }}"><br><br>
+            <label for="name"  style="font-size:25px;">Name:</label><br>
+            <input type="text" id="name" name="name" value="{{ name }}"  style="font-size:25px; height:25px;"><br>
+            <label for="id"  style="font-size:25px;"  style="font-size:25px;">Device ID:</label><br>
+            <input type="text" id="id" name="id" value="{{ id }}"  style="font-size:25px; height:25px;"><br>
+            <label for="key"  style="font-size:25px;">Local Key:</label><br>
+            <input type="text" id="key" name="key" value="{{ key }}"  style="font-size:25px; height:25px;"><br><br>
             <!-- Hidden fields for original values -->
             <input type="hidden" name="oldid" value="{{ id }}">
             <input type="hidden" name="original_name" value="{{ name }}">
             <input type="hidden" name="original_key" value="{{ key }}">
             <!-- Submit and Close buttons -->
-            <input type="submit" value="Update reminder">
-            <button type="button" onclick="closePopup()">Close</button>
+            <input type="submit" value="Update reminder"style="font-size:25px; height:40px;">
+            <button type="button" onclick="closePopup()" style="font-size:25px; height:40px;">Close</button>
         </form>
 		
     </div>

@@ -40,16 +40,16 @@
     <h1>Edit Reminder</h1>
     <div class="form-container">
         <form id="editForm" action="/editreminder" method="post">
-            <label for="description">Description:</label><br>
-            <input type="text" id="description" name="description" value="{{ description }}"><br>
-            <label for="time">Reminder Time:</label><br>
-            <input type="datetime-local" id="time" name="time" value="{{ time }}"><br><br>
+            <label for="description"  style="font-size:25px;">Description:</label><br>
+            <input type="text" id="description" name="description" value="{{ description }}"  style="font-size:25px; height:25px;"><br>
+            <label for="time"  style="font-size:25px;">Reminder Time:</label><br>
+            <input type="datetime-local" id="time" name="time" value="{{ time }}"  style="font-size:25px; height:25px;"><br><br>
             <!-- Hidden fields for original values -->
             <input type="hidden" name="original_description" value="{{ description }}">
             <input type="hidden" name="original_time" value="{{ time }}">
             <!-- Submit and Close buttons -->
-            <input type="submit" value="Update Reminder">
-            <button type="button" onclick="closePopup()">Close</button>
+            <input type="submit" value="Update Reminder" style="font-size:25px; height:40px;">
+            <button type="button" onclick="closePopup()" style="font-size:25px; height:40px;">Close</button>
         </form>
 		
     </div>
