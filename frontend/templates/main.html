@@ -384,6 +384,40 @@ window.onload = function () {
     updateClock(); // Initial clock update
     setInterval(updateClock, 1000); // Update clock every second
 };
+function openControl(data) {
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const popupWidth = 1000; // Width of the popup
+    const popupHeight = 900; // Height of the popup
+
+    const left = (screenWidth - popupWidth) / 2;
+    const top = (screenHeight - popupHeight) / 2;
+
+    const popupProps = `
+        width=${screenWidth},
+        height=${screenHeight},
+        left=no,
+        top=no,
+        resizable=no,
+        scrollbars=no,
+        status=no,
+        toolbar=no,
+        location=no,
+        menubar=no
+    `;
+    const conBulbWindow = window.open(`/conbulb?data=${data}`, 'ControlBulbPopup', popupProps);
+
+    if (conBulbWindow) {
+        // Check if the window is closed
+        const interval = setInterval(() => {
+            if (conBulbWindow.closed) {
+                refreshDashboard();
+                clearInterval(interval);
+                console.log('conBulbWindow popup closed.');
+            }
+        }, 1000);
+    }
+}
 </script>
 </body>
 </html>

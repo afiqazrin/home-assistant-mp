@@ -10,6 +10,9 @@ from ContactSQL import allContact,deletecontact,adddbcontact,editcontact
 from BulbSQL import allBulb, deleteBulb,editBulb,addBulb, getrow
 app = Flask(__name__, static_folder=r"/home/pi/Desktop/home-assistant-mp/frontend")
 from datetime import datetime
+from frontendbulb import initLightBulb,turnOnLightBulb,turnOffLightBulb,setBulbBrightness
+
+
 
 
 
@@ -242,8 +245,71 @@ def editbulb():
         device_id = request.form.get('id')
         editBulb(name,device_id,local_key,oldid)
         return '', 204
+@app.route('/conbulb', methods=['GET', 'POST'])
+def conbulb():
+    if request.method == 'GET':
+        data = request.args.get('data')
+        name,id,key=getrow(data)
+        print(data)
 
+        return render_template('conbulb.html', id=id,key=key,name=name)
+    
+@app.route('/open_bulb', methods=['POST'])
+def open_bulb():
+    data = request.json  # Get JSON data from request body
+    room = data.get('room')
+    name,id,key=getrow(room)
+    try:
+         initLightBulb(id, key) 
+    except:
+         print("error")
 
+    # Perform action based on the received parameters
+    if room is not None:
+        print(f'Opening light bulb in {room}...')
+        turnOnLightBulb()
+        return jsonify(message=f'Light bulb opened in {room}'), 200
+    else:
+        return jsonify(error='Invalid request'), 400
+
+@app.route('/close_bulb', methods=['POST'])
+def close_bulb():
+    data = request.json  # Get JSON data from request body
+    room = data.get('room')
+    name,id,key=getrow(room)
+    try:
+         initLightBulb(id, key) 
+    except:
+         print("error")
+  # Get 'room' parameter from JSON data
+
+    # Perform action based on the received parameters
+    if room is not None:
+        print(f'Closing light bulb in {room}...')
+        turnOffLightBulb()
+        return jsonify(message=f'Light bulb closed in {room}'), 200
+    else:
+        return jsonify(error='Invalid request'), 400
+@app.route('/update_slider_and_room_values', methods=['POST'])
+def update_slider_and_room_values():
+    data = request.json
+    value = data.get('value')
+    room = data.get('room')
+    print('Slider value:', value)
+    print('Room value:', room)
+    name,id,key=getrow(room)
+    try:
+         initLightBulb(id, key) 
+    except:
+         print("error")
+    if room is not None:
+        print(f'Closing light bulb in {room}...')
+        setBulbBrightness(int(value))
+        return jsonify(message=f'Light bulb adjusted in {room}'), 200
+    else:
+        return jsonify(error='Invalid request'), 400
+    # Process the slider value and room value here
+    return 'Slider value and room value received', 200
 if __name__ == '__main__':
     webbrowser.open('http://127.0.0.1:5000/', new=2, autoraise=True)
     app.run(threaded=True)

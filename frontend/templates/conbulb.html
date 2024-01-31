@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Bulb</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Consolas;
+            font-weight: 400;
+            flex-direction: column;
+            background-image: linear-gradient(to bottom, #4FC8EE 0%, #C1E3FF 42.73%, #90B5D8 100%);
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(230, 228, 228, 0.30);
+			box-shadow: -2px 3px 4px 2px rgba(0, 0, 0, 0.45);
+        }
+
+        label,
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+        .button-container{
+            display: flex;
+        }
+        .button-container button{
+            margin-right: 10px;
+        }
+        .slider-container {
+            width: 50%;
+            left:-10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Control Bulb</h1>
+
+    <div class="form-container">
+        <div class="button-container">
+            <button id="onBulb" style="font-size:45px; height:60px;"> On</button>
+            <button id="offBulb" style="font-size:45px; height:60px;"> Off</button>
+        </div>
+        <div class="slider-container">
+            <input type="range" min="1" max="100" step="1" value="1" id="slider">
+            <p id="slider-value">1</p>
+        </div>
+    </div>
+ 
+	
+
+    <script>
+function sendOpenCommand(room) {
+    fetch('/open_bulb', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ room: room })
+    }).then(response => {
+        if (response.ok) {
+            console.log(`Light bulb open successfully in ${room}.`);
+        } else {
+            console.error(`Failed to open light bulb in ${room}.`);
+        }
+    });
+}
+
+function sendCloseCommand(room) {
+    fetch('/close_bulb', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ room: room })
+    }).then(response => {
+        if (response.ok) {
+            console.log(`Light bulb close successfully in ${room}.`);
+        } else {
+            console.error(`Failed to vlose light bulb in ${room}.`);
+        }
+    });
+}
+document.getElementById('onBulb').addEventListener('click', function() {
+    const room = getRoomFromURL();
+    console.log(room)
+    sendOpenCommand(room);
+});
+
+document.getElementById('offBulb').addEventListener('click', function() {
+    const room = getRoomFromURL();
+    sendCloseCommand(room);
+});
+const slider = document.getElementById('slider');
+        const sliderValue = document.getElementById('slider-value');
+        const room = getRoomFromURL();
+        let timeout;
+
+        // Display initial value
+        sliderValue.textContent = slider.value;
+
+        // Update value when slider changes
+        slider.addEventListener('input', function() {
+            sliderValue.textContent = this.value;
+
+            // Clear previous timeout
+            clearTimeout(timeout);
+
+            // Set a timeout to send slider value after 500 milliseconds (adjust as needed)
+            timeout = setTimeout(() => {
+                sendSliderValueAndRoom(this.value, room);
+            }, 500);
+        });
+
+        // Function to get room from URL query parameter
+        function getRoomFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('data');
+        }
+
+        // Function to send slider value and room value to Flask
+        function sendSliderValueAndRoom(value, room) {
+            fetch('/update_slider_and_room_values', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ value: value, room: room })
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Slider value and room value sent to Flask:', value, room);
+                } else {
+                    console.error('Failed to send slider and room values to Flask');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

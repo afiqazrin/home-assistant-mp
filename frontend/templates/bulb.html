@@ -95,7 +95,7 @@
             content: "+"; /* Adding the plus sign */
         }
 
-        .edit-button, .delete-button {
+        .edit-button, .delete-button, .ligthbulb-button {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -110,6 +110,10 @@
 
         .edit-button {
             background-color: #3498db; /* Blue color */
+            color: white;
+        }
+        .ligthbulb-button {
+            background-color: #03AC13; /* Blue color */
             color: white;
         }
 
@@ -146,6 +150,7 @@
 									<button class="edit-button" onclick="openEditBulbPopup('{{ row[0] }}')">
 										<i class="fas fa-pencil-alt"></i> <!-- Font Awesome pencil icon -->
 									</button>
+ 
 
 									<form action="/deletebulb" method="post">
 										<input type="hidden" name="Device_ID" value="{{ row[1] }}">
@@ -153,6 +158,9 @@
 											<i class="fas fa-trash-alt"></i> <!-- Font Awesome trashcan icon -->
 										</button>
 									</form>
+                                    <button class="ligthbulb-button" onclick="openControl('{{ row[0] }}')">
+										<i class="fas fa-lightbulb"></i> <!-- Font Awesome pencil icon -->
+									</button>
 								</div>
 
                             </td>	
@@ -236,6 +244,41 @@ function openEditBulbPopup(data) {
         }, 1000);
     }
 }
+function openControl(data) {
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const popupWidth = 1000; // Width of the popup
+    const popupHeight = 900; // Height of the popup
+
+    const left = (screenWidth - popupWidth) / 2;
+    const top = (screenHeight - popupHeight) / 2;
+
+    const popupProps = `
+        width=${screenWidth},
+        height=${screenHeight},
+        left=no,
+        top=no,
+        resizable=no,
+        scrollbars=no,
+        status=no,
+        toolbar=no,
+        location=no,
+        menubar=no
+    `;
+    const conBulbWindow = window.open(`/conbulb?data=${data}`, 'ControlBulbPopup', popupProps);
+
+    if (conBulbWindow) {
+        // Check if the window is closed
+        const interval = setInterval(() => {
+            if (conBulbWindow.closed) {
+                refreshDashboard();
+                clearInterval(interval);
+                console.log('conBulbWindow popup closed.');
+            }
+        }, 1000);
+    }
+}
+
 
     </script>
 </body>

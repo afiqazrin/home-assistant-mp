@@ -36,16 +36,31 @@ help_keywords = [
 question_keywords = ["who", "what", "where", "why", "when", "how"]
 isBulbOn = False
 def save_emergency_contact():
-    speak("Emergency contact not found")
-    speak("Name of emergency contact to save")
-    emergency_name = speech_to_text().lower()
-    speak("Number of emergency contact")
-    number_input = speech_to_text()
-    emergency_number = "+"+extract_phone_number(number_input)
-    speak(
-        f"Saving emergency contact {emergency_name} with number {emergency_number} in contacts"
-    )
-    insert_contact_db(emergency_name, emergency_number, 1)
+    speak("Please save an emergency contact")
+    confirmed = False
+    while not confirmed:
+        speak("Name of emergency contact to save")
+        name = speech_to_text().lower()
+
+        speak("Number of emergency contact to save")
+        number_input = speech_to_text()
+
+        # Extract only digits from the input phone number
+        number = "+"+extract_phone_number(number_input)
+        speak(f"You want to save a contact named {name} and number of ")
+        for digit in number:
+            speak(digit)
+        speak("Is that correct? Please say yes or no.")
+        confirmation = speech_to_text().lower()
+        if "yes" in confirmation:
+            confirmed = True
+            speak("Saving contact")
+            insert_contact_db(name, number, 1)
+
+        elif "no" in confirmation:
+            confirmed = False
+        else:
+            speak("Sorry, I didn't catch that. Please say yes or no.")
 
 
 def extract_phone_number(input_string):
@@ -54,7 +69,6 @@ def extract_phone_number(input_string):
     # Remove non-digit characters
     phone_number = re.sub(digit_regex, "", input_string)
     return phone_number
-
 def main():
     global isBulbOn
     # Check if the emergency contact has already been saved
@@ -65,7 +79,7 @@ def main():
 
     person_detection_process = Process(target=process_frame, args=("person_detection",))
     person_detection_process.start()
-    speak("Person detection started")
+    speak("Starting movement detection")
     
     while True:
         # constantly reading reminder db in a seperate thread to check the validity of reminders
@@ -77,17 +91,30 @@ def main():
             continue
         # saving of contacts to use in sending message function
         if "save a contact" in text:
-            speak("Name of contact to save")
-            name = speech_to_text().lower()
+            confirmed = False
+            while not confirmed:
+                speak("Name of contact to save")
+                name = speech_to_text().lower()
+                speak("Number of contact to save")
+                number_input = speech_to_text()
+                # Extract only digits from the input phone number
+                number = "+"+extract_phone_number(number_input)
+                speak(f"You want to save a contact named {name} and number of ")
+                for digit in number:
+                    speak(digit)
+                speak("Is that correct? Please say yes or no.")
+                confirmation = speech_to_text().lower()
+                if "yes" in confirmation:
+                    confirmed = True
+                    speak("Saving contact")
+                    insert_contact_db(name, number, 0)
 
-            speak("Number of contact")
-            number_input = speech_to_text()
+                elif "no" in confirmation:
+                    confirmed = False
+                else:
+                    speak("Sorry, I didn't catch that. Please say yes or no.")
 
-            # Extract only digits from the input phone number
-            number = "+"+extract_phone_number(number_input)
 
-            speak("Saving name {} with number {} in contacts".format(name, number))
-            insert_contact_db(name, number, 0)
         # sending of message function
         elif "send a message" in text:
             speak("Who should I send a message to?")
@@ -122,7 +149,7 @@ def main():
                 target=process_frame, args=("system_control",)
             )
             systems_control_process.start()
-            time.sleep(30)
+            time.sleep(15)
             systems_control_process.terminate()
             time.sleep(1)
             person_detection_process = Process(
@@ -166,7 +193,7 @@ def main():
                         target=process_frame, args=("bulb_control",)
                     )
                     bulb_control_process.start()
-                    time.sleep(30)
+                    time.sleep(15)
                     bulb_control_process.terminate()
                     time.sleep(1)
                     person_detection_process = Process(

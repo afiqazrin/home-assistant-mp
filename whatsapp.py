@@ -11,7 +11,7 @@ screen_height= win.winfo_screenheight() # Gets the resolution (height) of your m
 
 def send_message(number, message):
     pywhatkit.sendwhatmsg_instantly(number, message, 15)
-    time.sleep(25)
+    time.sleep(35)
     # pywhatkit.sendwhatmsg_instantly(number, message, 10, 15)
     #                                 )
     pyautogui.moveTo(screen_width * 0.694, screen_height* 0.964)
